@@ -1,33 +1,42 @@
 package com.leetcodeclone.backend.service;
 
+import com.leetcodeclone.backend.entity.User;
+import com.leetcodeclone.backend.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.Optional;
 
 @Service
 public class AuthService {
 
-    // In-memory storage for users
-    private final Map<String, String> users = new HashMap<>(); // key: email, value: password
-    private final Map<String, String> usernames = new HashMap<>(); // key: email, value: username
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    // Signup method
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
     public boolean signup(String username, String email, String password) {
-        if (users.containsKey(email)) {
-            return false; // user already exists
+        if (userRepository.existsByEmail(email) || userRepository.existsByUsername(username)) {
+            return false;
         }
-        users.put(email, password);      // store email & password
-        usernames.put(email, username);  // store username
-        return true;                     // signup successful
+
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+
+        return true;
     }
 
-    // Login method
     public boolean login(String email, String password) {
-        return users.containsKey(email) && users.get(email).equals(password);
-    }
-
-    // Optional: get username by email
-    public String getUsername(String email) {
-        return usernames.get(email);
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isPresent()) {
+            return passwordEncoder.matches(password, userOpt.get().getPassword());
+        }
+        return false;
     }
 }

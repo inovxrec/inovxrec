@@ -1,12 +1,12 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Filter, ChevronRight, Check, X } from 'lucide-react';
+import { Search, Filter, ChevronRight, Check, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { mockProblems, getAllTags } from '@/data/mockData';
+import { useProblems, useProblemTags } from '@/hooks/useProblems';
 
 export default function ProblemsPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -14,29 +14,50 @@ export default function ProblemsPage() {
   const [tagFilter, setTagFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
-  const allTags = useMemo(() => getAllTags(), []);
+  const { data: problems, isLoading, error } = useProblems();
+  const { data: tags } = useProblemTags();
 
   const filteredProblems = useMemo(() => {
-    return mockProblems.filter((problem) => {
+    if (!problems) return [];
+    return problems.filter((problem) => {
       const matchesSearch = problem.title.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesDifficulty = difficultyFilter === 'all' || problem.difficulty === difficultyFilter;
       const matchesTag = tagFilter === 'all' || problem.tags.includes(tagFilter);
-      const matchesStatus = 
-        statusFilter === 'all' || 
-        (statusFilter === 'solved' && problem.solved) || 
+      const matchesStatus =
+        statusFilter === 'all' ||
+        (statusFilter === 'solved' && problem.solved) ||
         (statusFilter === 'unsolved' && !problem.solved);
-      
+
       return matchesSearch && matchesDifficulty && matchesTag && matchesStatus;
     });
-  }, [searchQuery, difficultyFilter, tagFilter, statusFilter]);
+  }, [searchQuery, difficultyFilter, tagFilter, statusFilter, problems]);
 
-  const stats = useMemo(() => ({
-    total: mockProblems.length,
-    solved: mockProblems.filter(p => p.solved).length,
-    easy: mockProblems.filter(p => p.difficulty === 'easy').length,
-    medium: mockProblems.filter(p => p.difficulty === 'medium').length,
-    hard: mockProblems.filter(p => p.difficulty === 'hard').length,
-  }), []);
+  const stats = useMemo(() => {
+    if (!problems) return { total: 0, solved: 0, easy: 0, medium: 0, hard: 0 };
+    return {
+      total: problems.length,
+      solved: problems.filter(p => p.solved).length,
+      easy: problems.filter(p => p.difficulty === 'easy').length,
+      medium: problems.filter(p => p.difficulty === 'medium').length,
+      hard: problems.filter(p => p.difficulty === 'hard').length,
+    };
+  }, [problems]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center text-destructive">
+        Failed to load problems. Please make sure the backend is running.
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -86,7 +107,7 @@ export default function ProblemsPage() {
               className="pl-10"
             />
           </div>
-          
+
           <div className="flex flex-wrap gap-2">
             <Select value={difficultyFilter} onValueChange={setDifficultyFilter}>
               <SelectTrigger className="w-[140px]">
@@ -107,7 +128,7 @@ export default function ProblemsPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Tags</SelectItem>
-                {allTags.map((tag) => (
+                {tags?.map((tag) => (
                   <SelectItem key={tag} value={tag}>{tag}</SelectItem>
                 ))}
               </SelectContent>
@@ -131,18 +152,17 @@ export default function ProblemsPage() {
       <div className="space-y-3">
         {filteredProblems.map((problem, index) => (
           <Link key={problem.id} to={`/problem/${problem.slug}`}>
-            <Card 
-              variant="glass" 
+            <Card
+              variant="glass"
               className="p-4 hover:border-primary/50 transition-all duration-200 cursor-pointer group"
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <div className="flex items-center gap-4">
                 {/* Status Icon */}
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                  problem.solved 
-                    ? 'bg-success/20 text-success' 
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center ${problem.solved
+                    ? 'bg-success/20 text-success'
                     : 'bg-muted text-muted-foreground'
-                }`}>
+                  }`}>
                   {problem.solved ? <Check className="h-3 w-3" /> : <X className="h-3 w-3 opacity-50" />}
                 </div>
 
@@ -192,3 +212,4 @@ export default function ProblemsPage() {
     </div>
   );
 }
+

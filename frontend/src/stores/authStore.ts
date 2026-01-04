@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import api from '@/lib/axios';
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -14,7 +15,6 @@ interface AuthState {
   logout: () => void;
 }
 
-// Note: This is mock authentication. In production, connect to Lovable Cloud for real JWT auth.
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
@@ -22,42 +22,46 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       login: async (email: string, password: string) => {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 800));
-        
-        // Mock validation
-        if (email && password.length >= 6) {
-          set({
-            isAuthenticated: true,
-            user: {
-              id: '1',
-              username: email.split('@')[0],
-              email,
-            },
-            token: 'mock-jwt-token-' + Date.now(),
-          });
-          return true;
+        try {
+          const response = await api.post('/auth/login/', { email, password });
+
+          if (response.data && response.data.tokens) {
+            set({
+              isAuthenticated: true,
+              user: response.data.user,
+              token: response.data.tokens.access,
+            });
+            return true;
+          }
+          return false;
+        } catch (error) {
+          console.error('Login failed:', error);
+          return false;
         }
-        return false;
       },
       signup: async (username: string, email: string, password: string) => {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        
-        // Mock validation
-        if (username && email && password.length >= 6) {
-          set({
-            isAuthenticated: true,
-            user: {
-              id: '1',
-              username,
-              email,
-            },
-            token: 'mock-jwt-token-' + Date.now(),
+        try {
+          // Django requires confirm_password
+          const response = await api.post('/auth/register/', {
+            username,
+            email,
+            password,
+            confirm_password: password
           });
-          return true;
+
+          if (response.data && response.data.tokens) {
+            set({
+              isAuthenticated: true,
+              user: response.data.user,
+              token: response.data.tokens.access,
+            });
+            return true;
+          }
+          return false;
+        } catch (error) {
+          console.error('Signup failed:', error);
+          return false;
         }
-        return false;
       },
       logout: () => {
         set({
@@ -65,6 +69,7 @@ export const useAuthStore = create<AuthState>()(
           user: null,
           token: null,
         });
+        localStorage.removeItem('auth-storage'); // Optional: clear persisted state
       },
     }),
     {
@@ -72,3 +77,4 @@ export const useAuthStore = create<AuthState>()(
     }
   )
 );
+

@@ -1,10 +1,12 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Editor from '@monaco-editor/react';
-import { 
-  Play, 
-  Send, 
-  ChevronLeft, 
+import api from '@/lib/axios';
+import { RuntimeDistribution } from '@/components/RuntimeDistribution';
+import {
+  Play,
+  Send,
+  ChevronLeft,
   ChevronDown,
   ChevronUp,
   Clock,
@@ -22,11 +24,12 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { mockProblems, mockSubmissions } from '@/data/mockData';
+import { useProblem } from '@/hooks/useProblems';
 import { Language, SUPPORTED_LANGUAGES, Submission } from '@/types';
 import { cn } from '@/lib/utils';
+import { useAuthStore } from '@/stores/authStore';
 
-type ExecutionStatus = 'idle' | 'running' | 'accepted' | 'wrong_answer' | 'time_limit_exceeded' | 'runtime_error';
+type ExecutionStatus = 'idle' | 'running' | 'accepted' | 'wrong_answer' | 'time_limit_exceeded' | 'runtime_error' | 'compilation_error';
 
 interface ExecutionResult {
   status: ExecutionStatus;
@@ -43,61 +46,128 @@ interface ExecutionResult {
 
 export default function ProblemDetailPage() {
   const { slug } = useParams<{ slug: string }>();
-  const problem = mockProblems.find((p) => p.slug === slug);
-  
+  const { data: problem, isLoading, error } = useProblem(slug || '');
+  const { isAuthenticated } = useAuthStore();
+
   const [language, setLanguage] = useState<Language>('javascript');
-  const [code, setCode] = useState(problem?.starterCode[language] || '');
+  const [code, setCode] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<ExecutionResult | null>(null);
   const [consoleOpen, setConsoleOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('description');
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
 
-  const problemSubmissions = useMemo(() => {
-    return mockSubmissions.filter((s) => s.problemId === problem?.id);
-  }, [problem?.id]);
+  // Initialize code when problem loads
+  useEffect(() => {
+    if (problem?.starterCode) {
+      setCode(problem.starterCode[language] || '');
+    }
+  }, [problem, language]);
+
+  // Fetch submissions when tab changes to 'submissions'
+  useEffect(() => {
+    if (activeTab === 'submissions' && problem?.id && isAuthenticated) {
+      api.get(`/submissions/?problem_id=${problem.id}`)
+        .then(res => setSubmissions(res.data))
+        .catch(err => console.error(err));
+    }
+  }, [activeTab, problem?.id, isAuthenticated]);
 
   const handleLanguageChange = (newLanguage: Language) => {
     setLanguage(newLanguage);
-    setCode(problem?.starterCode[newLanguage] || '');
+    // Don't overwrite if user has typed something? Or allow resetting?
+    // For now, simple behavior: reset to starter code if switching lang
+    if (problem?.starterCode) {
+      setCode(problem.starterCode[newLanguage] || '');
+    }
   };
 
   const handleRun = async () => {
+    if (!isAuthenticated) return alert('Please login to run code');
+    if (!problem) return;
+
     setIsRunning(true);
     setResult({ status: 'running' });
-    
-    // Simulate code execution
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
-    // Mock result
-    const mockResults: ExecutionResult[] = [
-      { status: 'accepted', output: 'All test cases passed!', runtime: 56, memory: 42.1 },
-      { status: 'wrong_answer', output: 'Test case 2 failed', failedTestCase: { input: '[3,2,4], 6', expected: '[1,2]', actual: '[0,1]' } },
-    ];
-    
-    setResult(mockResults[Math.random() > 0.3 ? 0 : 1]);
-    setIsRunning(false);
+
+    try {
+      const response = await api.post('/submissions/run/', {
+        code,
+        language,
+        problem_id: parseInt(problem.id)
+      });
+
+      const data = response.data;
+      setResult(data);
+      setConsoleOpen(true);
+
+    } catch (err: any) {
+      console.error("Execution error:", err);
+      setResult({
+        status: 'runtime_error',
+        error: err.response?.data?.error || err.message || 'Failed to execute code'
+      });
+      setConsoleOpen(true);
+    } finally {
+      setIsRunning(false);
+    }
   };
 
   const handleSubmit = async () => {
+    if (!isAuthenticated) return alert('Please login to submit code');
+    if (!problem) return;
+
     setIsSubmitting(true);
     setResult({ status: 'running' });
-    
-    // Simulate submission
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    
-    const mockResults: ExecutionResult[] = [
-      { status: 'accepted', output: 'Accepted! All test cases passed.', runtime: 52, memory: 41.8 },
-      { status: 'wrong_answer', output: 'Wrong Answer on test case 15', failedTestCase: { input: '[1,2,3,4], 7', expected: '[2,3]', actual: '[1,3]' } },
-      { status: 'time_limit_exceeded', output: 'Time Limit Exceeded on test case 20', error: 'Your solution exceeded the time limit' },
-      { status: 'runtime_error', output: 'Runtime Error', error: 'TypeError: Cannot read property of undefined' },
-    ];
-    
-    setResult(mockResults[Math.floor(Math.random() * mockResults.length)]);
-    setIsSubmitting(false);
+
+    try {
+      const response = await api.post('/submissions/submit/', {
+        code,
+        language,
+        problem_id: parseInt(problem.id)
+      });
+
+      const data = response.data;
+
+      // Transform backend response to Result type if needed
+      // Check if data matches ExecutionResult structure
+      setResult({
+        status: data.status,
+        runtime: data.runtime,
+        memory: data.memory,
+        output: data.output,
+        error: data.error_message, // Backend sends error_message
+        failedTestCase: data.failed_test_case
+      });
+      setConsoleOpen(true);
+
+      // Refresh submissions
+      if (activeTab === 'submissions') {
+        const subRes = await api.get(`/submissions/?problem_id=${problem.id}`);
+        setSubmissions(subRes.data);
+      }
+
+    } catch (err: any) {
+      console.error("Submission error:", err);
+      setResult({
+        status: 'runtime_error',
+        error: err.response?.data?.error || err.message || 'Failed to submit code'
+      });
+      setConsoleOpen(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  if (!problem) {
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error || !problem) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <h1 className="text-2xl font-bold mb-4">Problem not found</h1>
@@ -120,6 +190,7 @@ export default function ProblemDetailPage() {
       case 'time_limit_exceeded':
         return <Clock className="h-5 w-5 text-warning" />;
       case 'runtime_error':
+      case 'compilation_error':
         return <AlertTriangle className="h-5 w-5 text-destructive" />;
       case 'running':
         return <Loader2 className="h-5 w-5 text-primary animate-spin" />;
@@ -138,6 +209,8 @@ export default function ProblemDetailPage() {
         return 'Time Limit Exceeded';
       case 'runtime_error':
         return 'Runtime Error';
+      case 'compilation_error':
+        return 'Compilation Error';
       case 'running':
         return 'Running...';
       default:
@@ -151,6 +224,7 @@ export default function ProblemDetailPage() {
         return 'text-success';
       case 'wrong_answer':
       case 'runtime_error':
+      case 'compilation_error':
         return 'text-destructive';
       case 'time_limit_exceeded':
         return 'text-warning';
@@ -163,7 +237,7 @@ export default function ProblemDetailPage() {
   };
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col lg:flex-row">
+    <div className="h-screen flex flex-col lg:flex-row">
       {/* Left Panel - Problem Description */}
       <div className="w-full lg:w-1/2 border-r border-border flex flex-col">
         <div className="p-4 border-b border-border flex items-center justify-between">
@@ -195,9 +269,9 @@ export default function ProblemDetailPage() {
               <div>
                 <h1 className="text-2xl font-bold mb-2 font-display">{problem.title}</h1>
                 <div className="flex flex-wrap gap-2">
-                  {problem.tags.map((tag) => (
+                  {problem.tags.length > 0 ? problem.tags.map((tag: string) => (
                     <Badge key={tag} variant="tag">{tag}</Badge>
-                  ))}
+                  )) : null}
                 </div>
               </div>
 
@@ -209,7 +283,7 @@ export default function ProblemDetailPage() {
 
               <div className="space-y-4">
                 <h3 className="font-semibold text-lg">Examples</h3>
-                {problem.examples.map((example, i) => (
+                {problem.examples && problem.examples.map((example: any, i: number) => (
                   <Card key={i} variant="glass" className="p-4 space-y-2">
                     <div>
                       <span className="text-muted-foreground text-sm">Input:</span>
@@ -232,24 +306,26 @@ export default function ProblemDetailPage() {
                 ))}
               </div>
 
-              <div>
-                <h3 className="font-semibold text-lg mb-2">Constraints</h3>
-                <ul className="space-y-1">
-                  {problem.constraints.map((constraint, i) => (
-                    <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-                      <span className="text-primary mt-1">•</span>
-                      <code className="font-mono">{constraint}</code>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {problem.constraints && (
+                <div>
+                  <h3 className="font-semibold text-lg mb-2">Constraints</h3>
+                  <ul className="space-y-1">
+                    {problem.constraints.map((constraint: string, i: number) => (
+                      <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+                        <span className="text-primary mt-1">•</span>
+                        <code className="font-mono">{constraint}</code>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </TabsContent>
 
           <TabsContent value="submissions" className="flex-1 overflow-auto p-4 m-0">
-            {problemSubmissions.length > 0 ? (
+            {submissions.length > 0 ? (
               <div className="space-y-3">
-                {problemSubmissions.map((submission) => (
+                {submissions.map((submission) => (
                   <SubmissionCard key={submission.id} submission={submission} />
                 ))}
               </div>
@@ -281,11 +357,11 @@ export default function ProblemDetailPage() {
           </Select>
 
           <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleRun}
-              disabled={isRunning || isSubmitting}
+              disabled={isRunning || isSubmitting || !isAuthenticated}
             >
               {isRunning ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -294,10 +370,10 @@ export default function ProblemDetailPage() {
               )}
               <span className="ml-2">Run</span>
             </Button>
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               onClick={handleSubmit}
-              disabled={isRunning || isSubmitting}
+              disabled={isRunning || isSubmitting || !isAuthenticated}
             >
               {isSubmitting ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -341,7 +417,7 @@ export default function ProblemDetailPage() {
           "border-t border-border bg-card/80 transition-all duration-200",
           consoleOpen ? "h-48" : "h-10"
         )}>
-          <div 
+          <div
             className="flex items-center justify-between px-4 h-10 cursor-pointer hover:bg-muted/50 transition-colors"
             onClick={() => setConsoleOpen(!consoleOpen)}
           >
@@ -375,9 +451,9 @@ export default function ProblemDetailPage() {
                         {getStatusIcon(result.status)}
                         <span className="font-semibold">{getStatusText(result.status)}</span>
                       </div>
-                      
+
                       {result.output && (
-                        <div className="text-muted-foreground">{result.output}</div>
+                        <div className="text-muted-foreground whitespace-pre-wrap">{result.output}</div>
                       )}
 
                       {result.runtime && result.memory && (
@@ -393,8 +469,15 @@ export default function ProblemDetailPage() {
                         </div>
                       )}
 
+                      {result.status === 'accepted' && result.runtime !== undefined && (
+                        <RuntimeDistribution
+                          userRuntime={result.runtime}
+                          language={language}
+                        />
+                      )}
+
                       {result.error && (
-                        <div className="text-destructive bg-destructive/10 p-3 rounded">
+                        <div className="text-destructive bg-destructive/10 p-3 rounded whitespace-pre-wrap">
                           {result.error}
                         </div>
                       )}
@@ -438,6 +521,7 @@ function SubmissionCard({ submission }: { submission: Submission }) {
         return 'text-success';
       case 'wrong_answer':
       case 'runtime_error':
+      case 'compilation_error':
         return 'text-destructive';
       case 'time_limit_exceeded':
         return 'text-warning';
@@ -452,6 +536,7 @@ function SubmissionCard({ submission }: { submission: Submission }) {
         return <Check className="h-4 w-4" />;
       case 'wrong_answer':
       case 'runtime_error':
+      case 'compilation_error':
         return <X className="h-4 w-4" />;
       case 'time_limit_exceeded':
         return <Clock className="h-4 w-4" />;
@@ -489,3 +574,4 @@ function SubmissionCard({ submission }: { submission: Submission }) {
     </Card>
   );
 }
+
