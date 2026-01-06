@@ -11,3 +11,4 @@ gunicorn==21.2.0
 
 # Optional PostgreSQL support (uncomment if needed)
 # psycopg2-binary==2.9.7
+mysqlclient==2.2.0

@@ -33,7 +33,6 @@ class Problem(models.Model):
     examples = models.JSONField(default=list, help_text="List of example inputs/outputs")
     constraints = models.JSONField(default=list, help_text="List of constraint strings")
     starter_code = models.JSONField(default=dict, help_text="Starter code for each language")
-    test_cases = models.JSONField(default=list, help_text="Hidden test cases for validation")
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -53,6 +52,22 @@ class Problem(models.Model):
             problem=self, 
             solved=True
         ).exists()
+
+
+class TestCase(models.Model):
+    problem = models.ForeignKey(Problem, on_delete=models.CASCADE, related_name='test_cases')
+    input_data = models.TextField(help_text="Input for the test case")
+    expected_output = models.TextField(help_text="Expected output for the test case")
+    is_hidden = models.BooleanField(default=True, help_text="Whether this is a hidden test case")
+    order = models.IntegerField(default=0, help_text="Order of execution")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['order']
+        
+    def __str__(self):
+        return f"Test Case {self.order} for {self.problem.title}"
 
 
 class UserProblemProgress(models.Model):

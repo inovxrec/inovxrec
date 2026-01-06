@@ -1,14 +1,53 @@
-version: "3.9"
-
 services:
   backend:
-    build: ./backend
+    build: ./backend_django
+    volumes:
+      - ./backend_django:/app
     ports:
-      - "5000:5000"
+      - "8000:8000"
+    environment:
+      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,backend
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - JUDGE0_API_URL=https://ce.judge0.com
+      - DB_ENGINE=django.db.backends.mysql
+      - DB_NAME=leetcode_db
+      - DB_USER=leetcode_user
+      - DB_PASSWORD=leetcode_password
+      - DB_HOST=db
+      - DB_PORT=3306
+    depends_on:
+      - redis
+      - db
 
   frontend:
     build: ./frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     ports:
-      - "5173:5173"
+      - "8080:8080"
+    environment:
+      - VITE_API_URL=http://localhost:8000/api
     depends_on:
       - backend
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: leetcode_db
+      MYSQL_USER: leetcode_user
+      MYSQL_PASSWORD: leetcode_password
+      MYSQL_ROOT_PASSWORD: root_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

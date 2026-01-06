@@ -28,18 +28,6 @@ class Submission(models.Model):
     language = models.CharField(max_length=20, choices=LANGUAGE_CHOICES)
     status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='pending')
     
-    # Execution results
-    runtime = models.IntegerField(null=True, blank=True, help_text="Runtime in milliseconds")
-    memory = models.FloatField(null=True, blank=True, help_text="Memory usage in MB")
-    output = models.TextField(blank=True)
-    error_message = models.TextField(blank=True)
-    
-    # Failed test case details (JSON)
-    failed_test_case = models.JSONField(null=True, blank=True)
-    
-    # Judge0 submission details
-    judge0_token = models.CharField(max_length=100, blank=True)
-    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -52,3 +40,22 @@ class Submission(models.Model):
     @property
     def is_accepted(self):
         return self.status == 'accepted'
+
+
+class SubmissionResult(models.Model):
+    submission = models.OneToOneField(Submission, on_delete=models.CASCADE, related_name='result')
+    runtime = models.IntegerField(null=True, blank=True, help_text="Runtime in milliseconds")
+    memory = models.FloatField(null=True, blank=True, help_text="Memory usage in MB")
+    output = models.TextField(blank=True)
+    error_message = models.TextField(blank=True)
+    
+    # Failed test case details
+    failed_test_case = models.JSONField(null=True, blank=True)
+    
+    # Judge0 submission details
+    judge0_token = models.CharField(max_length=100, blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Result for submission {self.submission.id}"

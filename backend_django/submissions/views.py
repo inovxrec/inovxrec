@@ -119,25 +119,36 @@ def submit_code(request):
         
         result = execute_code_judge0(code, language, test_input)
         
-        # Update submission with results
+        # Update submission status
         submission.status = result['status']
-        submission.runtime = result.get('runtime')
-        submission.memory = result.get('memory')
-        submission.output = result.get('output', '')
-        submission.error_message = result.get('error', '')
+        
+        # Prepare result data
+        result_data = {
+            'runtime': result.get('runtime'),
+            'memory': result.get('memory'),
+            'output': result.get('output', ''),
+            'error_message': result.get('error', ''),
+        }
         
         # Check if output matches expected
         if result['status'] == 'accepted':
             actual_output = result.get('output', '').strip()
             if actual_output != expected_output.strip():
                 submission.status = 'wrong_answer'
-                submission.failed_test_case = {
+                result_data['failed_test_case'] = {
                     'input': test_input,
                     'expected': expected_output,
                     'actual': actual_output
                 }
         
         submission.save()
+        
+        # Create Submission Result
+        from .models import SubmissionResult
+        SubmissionResult.objects.create(
+            submission=submission,
+            **result_data
+        )
         
         # Update user progress if accepted
         if submission.status == 'accepted':
@@ -228,18 +239,21 @@ def update_user_progress(user, problem):
         progress.save()
         
         # Update user statistics
-        user.total_solved += 1
+        from authentication.models import UserStats
+        stats, _ = UserStats.objects.get_or_create(user=user)
+        
+        stats.total_solved += 1
         if problem.difficulty == 'easy':
-            user.easy_solved += 1
+            stats.easy_solved += 1
         elif problem.difficulty == 'medium':
-            user.medium_solved += 1
+            stats.medium_solved += 1
         elif problem.difficulty == 'hard':
-            user.hard_solved += 1
+            stats.hard_solved += 1
         
         # Update streak (simplified - just increment for now)
-        user.streak += 1
-        user.last_solved_date = timezone.now().date()
-        user.save()
+        stats.streak += 1
+        stats.last_solved_date = timezone.now().date()
+        stats.save()
     
     if not created:
         progress.attempts += 1

@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import Problem, Tag, UserProblemProgress
+from .models import Problem, Tag, UserProblemProgress, TestCase
+
+
+class TestCaseInline(admin.TabularInline):
+    model = TestCase
+    extra = 1
 
 
 @admin.register(Tag)
@@ -17,13 +22,14 @@ class ProblemAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
     filter_horizontal = ('tags',)
     ordering = ('id',)
+    inlines = [TestCaseInline]
     
     fieldsets = (
         ('Basic Information', {
             'fields': ('title', 'slug', 'difficulty', 'description', 'tags')
         }),
         ('Problem Details', {
-            'fields': ('examples', 'constraints', 'starter_code', 'test_cases')
+            'fields': ('examples', 'constraints', 'starter_code')
         }),
     )
 

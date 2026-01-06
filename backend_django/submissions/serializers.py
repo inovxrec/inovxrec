@@ -7,6 +7,8 @@ class SubmissionSerializer(serializers.ModelSerializer):
     problem_title = serializers.CharField(source='problem.title', read_only=True)
     problem_slug = serializers.CharField(source='problem.slug', read_only=True)
     problem_difficulty = serializers.CharField(source='problem.difficulty', read_only=True)
+    runtime = serializers.IntegerField(source='result.runtime', read_only=True)
+    memory = serializers.FloatField(source='result.memory', read_only=True)
     
     class Meta:
         model = Submission
@@ -19,6 +21,11 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
 class SubmissionDetailSerializer(serializers.ModelSerializer):
     problem = ProblemListSerializer(read_only=True)
+    runtime = serializers.IntegerField(source='result.runtime', read_only=True)
+    memory = serializers.FloatField(source='result.memory', read_only=True)
+    output = serializers.CharField(source='result.output', read_only=True)
+    error_message = serializers.CharField(source='result.error_message', read_only=True)
+    failed_test_case = serializers.JSONField(source='result.failed_test_case', read_only=True)
     
     class Meta:
         model = Submission

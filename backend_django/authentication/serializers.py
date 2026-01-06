@@ -53,6 +53,11 @@ class UserLoginSerializer(serializers.Serializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     acceptance_rate = serializers.ReadOnlyField()
+    total_solved = serializers.IntegerField(source='stats.total_solved', read_only=True)
+    easy_solved = serializers.IntegerField(source='stats.easy_solved', read_only=True)
+    medium_solved = serializers.IntegerField(source='stats.medium_solved', read_only=True)
+    hard_solved = serializers.IntegerField(source='stats.hard_solved', read_only=True)
+    streak = serializers.IntegerField(source='stats.streak', read_only=True)
     
     class Meta:
         model = User
@@ -61,15 +66,17 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'medium_solved', 'hard_solved', 'streak', 'acceptance_rate',
             'created_at'
         )
-        read_only_fields = (
-            'id', 'total_solved', 'easy_solved', 'medium_solved', 
-            'hard_solved', 'streak', 'acceptance_rate', 'created_at'
-        )
+        read_only_fields = fields
 
 
 class UserStatsSerializer(serializers.ModelSerializer):
     acceptance_rate = serializers.ReadOnlyField()
     total_submissions = serializers.SerializerMethodField()
+    total_solved = serializers.IntegerField(source='stats.total_solved', read_only=True)
+    easy_solved = serializers.IntegerField(source='stats.easy_solved', read_only=True)
+    medium_solved = serializers.IntegerField(source='stats.medium_solved', read_only=True)
+    hard_solved = serializers.IntegerField(source='stats.hard_solved', read_only=True)
+    streak = serializers.IntegerField(source='stats.streak', read_only=True)
     
     class Meta:
         model = User

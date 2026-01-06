@@ -8,14 +8,6 @@ class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
-    # Statistics fields
-    total_solved = models.IntegerField(default=0)
-    easy_solved = models.IntegerField(default=0)
-    medium_solved = models.IntegerField(default=0)
-    hard_solved = models.IntegerField(default=0)
-    streak = models.IntegerField(default=0)
-    last_solved_date = models.DateField(null=True, blank=True)
-    
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
     
@@ -34,3 +26,18 @@ class User(AbstractUser):
             status='accepted'
         ).count()
         return round((accepted_submissions / total_submissions) * 100, 1)
+
+
+class UserStats(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='stats')
+    total_solved = models.IntegerField(default=0)
+    easy_solved = models.IntegerField(default=0)
+    medium_solved = models.IntegerField(default=0)
+    hard_solved = models.IntegerField(default=0)
+    streak = models.IntegerField(default=0)
+    last_solved_date = models.DateField(null=True, blank=True)
+    
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"Stats for {self.user.username}"
