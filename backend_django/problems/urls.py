@@ -7,4 +7,5 @@ urlpatterns = [
     path('stats/', views.problem_stats, name='problem_stats'),
     path('progress/', views.user_progress, name='user_progress'),
     path('<slug:slug>/', views.ProblemDetailView.as_view(), name='problem_detail'),
+    path('meta/roadmap/', views.roadmap_stats, name='roadmap_stats'),
 ]

@@ -13,14 +13,22 @@ from .serializers import (
 )
 
 
-class ProblemListView(generics.ListAPIView):
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
+
+class ProblemListView(generics.ListCreateAPIView):
     serializer_class = ProblemListSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['difficulty']
     search_fields = ['title', 'description']
     ordering_fields = ['difficulty', 'title', 'created_at']
     ordering = ['id']
+    
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            from .serializers import ProblemCreateSerializer
+            return ProblemCreateSerializer
+        return ProblemListSerializer
     
     def get_queryset(self):
         queryset = Problem.objects.all().prefetch_related('tags')
@@ -102,9 +110,39 @@ def problem_stats(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def user_progress(request):
     """Get user's progress on all problems"""
     progress = UserProblemProgress.objects.filter(user=request.user).select_related('problem')
     serializer = UserProblemProgressSerializer(progress, many=True)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def roadmap_stats(request):
+    """Get stats for the roadmap (grouped by tag)"""
+    from django.db.models import Count, Q
+    
+    # Get all tags
+    tags = Tag.objects.all()
+    stats = {}
+    
+    for tag in tags:
+        # Total problems for this tag
+        total = Problem.objects.filter(tags=tag).count()
+        
+        # Solved by user
+        solved = UserProblemProgress.objects.filter(
+            user=request.user, 
+            problem__tags=tag, 
+            solved=True
+        ).count()
+        
+        stats[tag.name] = {
+            'total': total,
+            'solved': solved,
+            'slug': tag.name.lower().replace(' ', '-')  # Simplified slug for frontend mapping
+        }
+        
+    return Response(stats)

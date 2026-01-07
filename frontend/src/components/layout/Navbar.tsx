@@ -37,6 +37,11 @@ export function Navbar() {
                     Dashboard
                   </Button>
                 </Link>
+                <Link to="/roadmap">
+                  <Button variant="ghost" className="font-medium">
+                    Roadmap
+                  </Button>
+                </Link>
                 <div className="flex items-center gap-3 pl-4 border-l border-border">
                   <div className="flex items-center gap-2 text-sm">
                     <User className="h-4 w-4 text-primary" />

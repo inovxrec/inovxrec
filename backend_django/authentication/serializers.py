@@ -31,15 +31,25 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class UserLoginSerializer(serializers.Serializer):
-    email = serializers.EmailField()
+    email = serializers.CharField()
     password = serializers.CharField()
     
     def validate(self, attrs):
-        email = attrs.get('email')
+        email_or_username = attrs.get('email')
         password = attrs.get('password')
         
-        if email and password:
-            user = authenticate(username=email, password=password)
+        if email_or_username and password:
+            # Try to authenticate with the provided input (as email or username)
+            user = authenticate(username=email_or_username, password=password)
+            
+            # If not found, try to find user by username and then authenticate with email
+            if not user:
+                from django.db.models import Q
+                user_obj = User.objects.filter(Q(username=email_or_username) | Q(email=email_or_username)).first()
+                if user_obj:
+                    # If found, try authenticating with their email (since USERNAME_FIELD is email)
+                    user = authenticate(username=user_obj.email, password=password)
+            
             if not user:
                 raise serializers.ValidationError('Invalid credentials')
             if not user.is_active:
