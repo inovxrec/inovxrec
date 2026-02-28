@@ -7,55 +7,47 @@ import {
 export function TerminalDemo() {
     return (
         <Terminal>
-            <TypingAnimation>&gt; pnpm dlx shadcn@latest init</TypingAnimation>
+            <TypingAnimation>&gt; npx inovx-cli init --project=venture-lab</TypingAnimation>
 
             <AnimatedSpan className="text-green-500">
-                ✔ Preflight checks.
+                ✔ Analyzing market opportunity.
             </AnimatedSpan>
 
             <AnimatedSpan className="text-green-500">
-                ✔ Verifying framework. Found Next.js.
+                ✔ Designing scalable technical architecture.
             </AnimatedSpan>
 
             <AnimatedSpan className="text-green-500">
-                ✔ Validating Tailwind CSS.
+                ✔ Integrating business logic with core APIs.
             </AnimatedSpan>
 
             <AnimatedSpan className="text-green-500">
-                ✔ Validating import alias.
+                ✔ Validating financial models.
             </AnimatedSpan>
 
             <AnimatedSpan className="text-green-500">
-                ✔ Writing components.json.
+                ✔ Generating pitch decks.
             </AnimatedSpan>
 
             <AnimatedSpan className="text-green-500">
-                ✔ Checking registry.
+                ✔ Deploying across cloud infrastructure.
             </AnimatedSpan>
 
             <AnimatedSpan className="text-green-500">
-                ✔ Updating tailwind.config.ts
-            </AnimatedSpan>
-
-            <AnimatedSpan className="text-green-500">
-                ✔ Updating app/globals.css
-            </AnimatedSpan>
-
-            <AnimatedSpan className="text-green-500">
-                ✔ Installing dependencies.
+                ✔ Optimizing user acquisition funnel.
             </AnimatedSpan>
 
             <AnimatedSpan className="text-blue-500">
-                <span>ℹ Updated 1 file:</span>
-                <span className="pl-2">- lib/utils.ts</span>
+                <span>ℹ Strategy verified:</span>
+                <span className="pl-2">- tech-business-synergy.pdf</span>
             </AnimatedSpan>
 
             <TypingAnimation className="text-muted-foreground">
-                Success! Project initialization completed.
+                Success! InovX project initialization completed.
             </TypingAnimation>
 
             <TypingAnimation className="text-muted-foreground">
-                You may now add components.
+                You are ready to disrupt the market.
             </TypingAnimation>
         </Terminal>
     )

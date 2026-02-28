@@ -64,10 +64,10 @@ export default function ProblemsPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="font-display text-4xl font-bold tracking-wider mb-2">
-          PROBLEM_<span className="text-primary">DATABASE</span>
+          CHALLENGE_<span className="text-primary">DATABASE</span>
         </h1>
         <p className="text-muted-foreground">
-          Master algorithms and data structures through practice
+          Enhance your tech and business skills with InovX challenges
         </p>
       </div>
 
@@ -101,7 +101,7 @@ export default function ProblemsPage() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search problems..."
+              placeholder="Search challenges..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -160,8 +160,8 @@ export default function ProblemsPage() {
               <div className="flex items-center gap-4">
                 {/* Status Icon */}
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center ${problem.solved
-                    ? 'bg-success/20 text-success'
-                    : 'bg-muted text-muted-foreground'
+                  ? 'bg-success/20 text-success'
+                  : 'bg-muted text-muted-foreground'
                   }`}>
                   {problem.solved ? <Check className="h-3 w-3" /> : <X className="h-3 w-3 opacity-50" />}
                 </div>

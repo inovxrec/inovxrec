@@ -3,10 +3,10 @@ import { Problem, Submission, User } from '@/types';
 export const mockProblems: Problem[] = [
   {
     id: '1',
-    title: 'Two Sum',
-    slug: 'two-sum',
+    title: 'Resource Allocation Optimizer',
+    slug: 'resource-allocation-optimizer',
     difficulty: 'easy',
-    tags: ['Array', 'Hash Table'],
+    tags: ['Optimization', 'Logic'],
     solved: true,
     description: `Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
 
@@ -64,10 +64,10 @@ public:
   },
   {
     id: '2',
-    title: 'Add Two Numbers',
-    slug: 'add-two-numbers',
+    title: 'Financial Data Merger',
+    slug: 'financial-data-merger',
     difficulty: 'medium',
-    tags: ['Linked List', 'Math', 'Recursion'],
+    tags: ['Data Engineering', 'Linked List'],
     solved: false,
     description: `You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.
 
@@ -151,10 +151,10 @@ public:
   },
   {
     id: '3',
-    title: 'Median of Two Sorted Arrays',
-    slug: 'median-of-two-sorted-arrays',
+    title: 'Market Price Analysis',
+    slug: 'market-price-analysis',
     difficulty: 'hard',
-    tags: ['Array', 'Binary Search', 'Divide and Conquer'],
+    tags: ['Analytics', 'Binary Search'],
     solved: false,
     description: `Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays.
 
@@ -571,8 +571,8 @@ export const mockSubmissions: Submission[] = [
 
 export const mockUser: User = {
   id: '1',
-  username: 'cybercoder',
-  email: 'cybercoder@example.com',
+  username: 'innovator_01',
+  email: 'member@inovx.club',
   totalSolved: 4,
   easySolved: 2,
   mediumSolved: 1,

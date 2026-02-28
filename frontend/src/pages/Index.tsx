@@ -15,6 +15,15 @@ import SlideInSection from '@/components/animations/SlideInSection';
 import CounterAnimation from '@/components/animations/CounterAnimation';
 import FloatingElements from '@/components/animations/FloatingElements';
 import MagneticHover from '@/components/animations/MagneticHover';
+import TextType from '@/component/TextType';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 
 export default function Index() {
   const { isAuthenticated } = useAuthStore();
@@ -22,41 +31,41 @@ export default function Index() {
   const CARDS = [
     {
       id: 0,
-      name: "Code Execution",
-      designation: "Core Engine",
+      name: "Tech Mastery",
+      designation: "Skill Development",
       content: (
         <p>
-          Instant, secure, and isolated <span className="font-bold text-white">code execution environment</span> supporting multiple languages. Run your algorithms with confidence.
+          Master the latest technologies through <span className="font-bold text-white">intensive coding workshops</span> and hands-on projects. Stay ahead in the digital race.
         </p>
       ),
     },
     {
       id: 1,
-      name: "Progress Tracking",
-      designation: "Analytics",
+      name: "Business Strategy",
+      designation: "Strategic Growth",
       content: (
         <p>
-          Detailed insights into your <span className="font-bold text-white">problem-solving journey</span> with visual analytics and history. Track your growth over time.
+          Bridge the gap between product and market with <span className="font-bold text-white">marketing, operations, and finance</span> knowledge. Build sustainable models.
         </p>
       ),
     },
     {
       id: 2,
-      name: "Global Leaderboards",
-      designation: "Competition",
+      name: "Innovation Hub",
+      designation: "Entrepreneurship",
       content: (
         <p>
-          Compete with developers worldwide and see where you stand in the <span className="font-bold text-white">global rankings</span>. Challenge yourself to reach the top.
+          Foster an <span className="font-bold text-white">entrepreneurial mindset</span>. Develop solutions that address real-world challenges through creative problem-solving.
         </p>
       ),
     },
     {
       id: 3,
-      name: "Community Hub",
-      designation: "Social",
+      name: "Networking",
+      designation: "Career Growth",
       content: (
         <p>
-          Discuss problems, share <span className="font-bold text-white">optimized solutions</span>, and learn from the best in the field. Grow together.
+          Connect with industry leaders, alumni, and <span className="font-bold text-white">like-minded peers</span>. Build a community that grows together for mutual success.
         </p>
       ),
     },
@@ -69,6 +78,9 @@ export default function Index() {
 
       <main className="scroll-optimized">
         <ExovanceHero />
+
+        {/* Global Announcement / Ticker */}
+
 
         {/* Philosophy / About Section */}
         <section className="py-32 px-4 relative z-10 bg-black scroll-optimized">
@@ -85,24 +97,24 @@ export default function Index() {
                     <p className="text-4xl md:text-5xl font-light leading-tight tracking-tight">
                       <span className="text-gray-500">We believe in</span>{' '}
                       <TypewriterText
-                        text="pushing boundaries"
+                        text="the synergy"
                         className="text-white font-medium"
                         delay={1000}
                         speed={80}
                         once={true}
                       />{' '}
-                      <span className="text-gray-500">of what's possible in</span>{' '}
-                      <span className="text-white">code execution</span>.
+                      <span className="text-gray-500">between</span>{' '}
+                      <span className="text-white">Business and Technology</span>.
                     </p>
                   </ScrollReveal>
 
                   <ScrollReveal delay={0.8} once={true}>
                     <div className="mt-12 flex gap-4">
                       {isAuthenticated ? (
-                        <Link to="/problems">
+                        <Link to="/auth?mode=signup">
                           <MagneticHover>
                             <Button size="lg" className="rounded-full bg-white text-black hover:bg-gray-200 hover:text-black transition-all duration-300">
-                              Start Coding <ArrowRight className="ml-2 h-4 w-4" />
+                              Explore InovX <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                           </MagneticHover>
                         </Link>
@@ -110,7 +122,7 @@ export default function Index() {
                         <Link to="/auth?mode=signup">
                           <MagneticHover>
                             <Button size="lg" className="rounded-full bg-white text-black hover:bg-gray-200 hover:text-black transition-all duration-300">
-                              Get Started <ArrowRight className="ml-2 h-4 w-4" />
+                              Join Us <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                           </MagneticHover>
                         </Link>
@@ -127,7 +139,7 @@ export default function Index() {
                   </TextReveal>
                   <ScrollReveal delay={0.4} direction="right" once={true}>
                     <p className="text-gray-400 leading-relaxed text-lg">
-                      Our platform leverages cutting-edge technology to provide immediate feedback and deeper insights into your code. We don't just run tests; we analyze structure.
+                      Bridging the gap between code and commerce. We focus on teaching the business logic behind every technical innovation.
                     </p>
                   </ScrollReveal>
                 </div>
@@ -138,7 +150,7 @@ export default function Index() {
                   </TextReveal>
                   <ScrollReveal delay={0.4} direction="right" once={true}>
                     <p className="text-gray-400 leading-relaxed text-lg">
-                      Speed is of the essence. Our localized execution environment ensures that your algorithms are tested securely and swiftly, matching the pace of your thoughts.
+                      From operational efficiency to financial strategy, we equip you with the tools to turn your ideas into viable, scaling enterprises.
                     </p>
                   </ScrollReveal>
                 </div>
@@ -158,6 +170,152 @@ export default function Index() {
           </div>
         </section>
 
+        {/* Mission & Vision Section */}
+        <section id="vision-mission" className="py-24 px-4 relative z-10 bg-black scroll-optimized">
+          <div className="container mx-auto max-w-5xl">
+            <div className="grid md:grid-cols-2 gap-8">
+              <ScrollReveal direction="right" once={true} delay={0.2}>
+                <div className="group relative p-8 h-full bg-[#0a0a0a] border border-white/5 rounded-xl hover:border-primary/20 transition-all duration-500 overflow-hidden">
+                  {/* Decorative Elements */}
+                  <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-white/20" />
+                  <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-white/20" />
+                  <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-white/20" />
+                  <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-white/20" />
+                  <div className="absolute top-4 left-4 text-[10px] text-white/10 font-mono">+</div>
+                  <div className="absolute top-4 right-4 text-[10px] text-white/10 font-mono">+</div>
+                  <div className="absolute bottom-4 left-4 text-[10px] text-white/10 font-mono">+</div>
+                  <div className="absolute bottom-4 right-4 text-[10px] text-white/10 font-mono">+</div>
+
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full -mr-16 -mt-16 group-hover:bg-primary/10 transition-colors" />
+
+                  <div className="relative flex flex-col h-full">
+                    <h2 className="text-xl font-bold mb-4 tracking-widest text-white font-display border-b border-white/5 pb-2">OUR MISSION</h2>
+                    <p className="text-gray-400 text-sm mb-8 leading-relaxed font-light">
+                      To foster innovation and entrepreneurship by providing students with the technical skills, business knowledge, and networking opportunities needed to succeed in today's competitive tech industry.
+                    </p>
+
+                    <div className="mt-auto relative rounded-lg bg-black/40 p-4 font-mono text-[11px] border border-white/5 backdrop-blur-md">
+                      <pre className="text-gray-400 leading-tight overflow-x-auto scrollbar-hide">
+                        <code>
+                          <span className="text-blue-400">function</span> <span className="text-yellow-300">innovate</span>() {'{'}
+                          <br />
+                          {"  "}<span className="text-purple-400">return</span> community.<span className="text-yellow-300">impact</span>();
+                          <br />
+                          {'}'}
+                        </code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </ScrollReveal>
+
+              <ScrollReveal direction="left" once={true} delay={0.4}>
+                <div className="group relative p-8 h-full bg-[#0a0a0a] border border-white/5 rounded-xl hover:border-secondary/20 transition-all duration-500 overflow-hidden">
+                  {/* Decorative Elements */}
+                  <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-white/20" />
+                  <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-white/20" />
+                  <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-white/20" />
+                  <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-white/20" />
+                  <div className="absolute top-4 left-4 text-[10px] text-white/10 font-mono">+</div>
+                  <div className="absolute top-4 right-4 text-[10px] text-white/10 font-mono">+</div>
+                  <div className="absolute bottom-4 left-4 text-[10px] text-white/10 font-mono">+</div>
+                  <div className="absolute bottom-4 right-4 text-[10px] text-white/10 font-mono">+</div>
+
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 blur-3xl rounded-full -mr-16 -mt-16 group-hover:bg-secondary/10 transition-colors" />
+
+                  <div className="relative flex flex-col h-full">
+                    <h2 className="text-xl font-bold mb-4 tracking-widest text-white font-display border-b border-white/5 pb-2">OUR VISION</h2>
+                    <p className="text-gray-400 text-sm mb-8 leading-relaxed font-light">
+                      To become the premier platform for nurturing technical and entrepreneurial talent, empowering students to create innovative solutions.
+                    </p>
+
+                    <div className="mt-auto border-l-2 border-primary/30 pl-4 py-3 bg-white/[0.02] rounded-r-lg">
+                      <p className="italic text-gray-300 text-xs leading-relaxed font-light">
+                        "Transforming ideas into impactful solutions for a better tomorrow."
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </ScrollReveal>
+            </div>
+          </div>
+        </section>
+
+        {/* Events Carousel Section */}
+        <section className="py-32 px-4 relative z-10 bg-black overflow-hidden">
+          <div className="container mx-auto">
+            <ScrollReveal delay={0.2} once={true}>
+              <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+                <div>
+                  <h2 className="text-sm font-mono text-primary mb-4 tracking-[0.3em] uppercase">Club Life</h2>
+                  <h3 className="text-4xl md:text-6xl font-display font-bold tracking-tighter">
+                    VIBRANT_<span className="text-primary">EVENTS</span>
+                  </h3>
+                </div>
+                <p className="max-w-md text-gray-500 text-lg font-light leading-relaxed">
+                  Glimpses into our high-octane hackathons, strategic boardrooms, and exclusive networking mixers.
+                </p>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal delay={0.4} once={true}>
+              <div className="relative px-12">
+                <Carousel
+                  opts={{
+                    align: "start",
+                    loop: true,
+                  }}
+                  plugins={[
+                    Autoplay({
+                      delay: 4000,
+                    }),
+                  ]}
+                  className="w-full"
+                >
+                  <CarouselContent className="-ml-4">
+                    {[
+                      {
+                        title: "InovX Hackathon 2025",
+                        desc: "48 hours of intense coding and product building.",
+                        img: "/hackathon_event_1772289703083.png"
+                      },
+                      {
+                        title: "Strategy Spotlight",
+                        desc: "Mastering the art of business scaling and financial modeling.",
+                        img: "/business_strategy_event_1772289721670.png"
+                      },
+                      {
+                        title: "Leaders Connect",
+                        desc: "Exclusive networking with tech founders and industry titans.",
+                        img: "/networking_event_inovx_1772289739248.png"
+                      }
+                    ].map((event, index) => (
+                      <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                        <div className="group relative aspect-[16/10] overflow-hidden rounded-2xl border border-white/5 bg-[#0a0a0a]">
+                          <img
+                            src={event.img}
+                            alt={event.title}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80 group-hover:opacity-40 transition-opacity" />
+                          <div className="absolute bottom-0 left-0 p-8 w-full translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                            <h4 className="text-xl font-bold mb-2 tracking-tight text-white">{event.title}</h4>
+                            <p className="text-gray-400 text-sm font-light opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                              {event.desc}
+                            </p>
+                          </div>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="hidden md:flex -left-6 bg-black/50 border-white/10 hover:bg-primary hover:border-primary text-white" />
+                  <CarouselNext className="hidden md:flex -right-6 bg-black/50 border-white/10 hover:bg-primary hover:border-primary text-white" />
+                </Carousel>
+              </div>
+            </ScrollReveal>
+          </div>
+        </section>
+
         {/* Selected Works / Features */}
         <section className="py-20 bg-black relative z-10 overflow-hidden min-h-screen flex items-center">
           <div className="container mx-auto px-4">
@@ -168,19 +326,18 @@ export default function Index() {
                   <ScrollReveal delay={0.1} once={true}>
                     <div>
                       <h2 className="text-primary font-mono text-sm tracking-widest uppercase mb-4">
-                        Why MeetCode?
+                        Why InovX?
                       </h2>
                       <h3 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight font-display">
-                        The Future of Technical Interviews
+                        Bridging The Gap Between Ideas and Execution
                       </h3>
                     </div>
                   </ScrollReveal>
 
                   <ScrollReveal delay={0.2} once={true}>
                     <p className="text-xl leading-relaxed text-gray-300">
-                      MeetCode revolutionizes how developers showcase their skills. Our platform combines
-                      cutting-edge technology with intuitive design to create the most advanced coding
-                      interview experience available today.
+                      InovX is a premier student organization dedicated to fostering the next generation of
+                      leaders who are as comfortable with code as they are with cash flows and marketing strategies.
                     </p>
                   </ScrollReveal>
 
@@ -193,10 +350,10 @@ export default function Index() {
                           </div>
                         </div>
                         <div>
-                          <h4 className="text-white text-lg font-semibold mb-2">Instant Execution Environment</h4>
+                          <h4 className="text-white text-lg font-semibold mb-2">Technical Projects</h4>
                           <p className="text-gray-400 leading-relaxed text-base">
-                            Run your code in real-time with our secure, isolated execution environment.
-                            Support for multiple programming languages with instant feedback.
+                            Work on real-world projects that solve business problems using modern
+                            technologies like AI, Web Development, and Cybersecurity.
                           </p>
                         </div>
                       </div>
@@ -208,10 +365,10 @@ export default function Index() {
                           </div>
                         </div>
                         <div>
-                          <h4 className="text-white text-lg font-semibold mb-2">Advanced Code Analysis</h4>
+                          <h4 className="text-white text-lg font-semibold mb-2">Business Hackathons</h4>
                           <p className="text-gray-400 leading-relaxed text-base">
-                            Beyond just running tests, we analyze your code structure, efficiency,
-                            and provide detailed insights to help you improve.
+                            Participate in events where strategy meets code. Build business models,
+                            pitch to investors, and showcase your product vision.
                           </p>
                         </div>
                       </div>
@@ -223,10 +380,10 @@ export default function Index() {
                           </div>
                         </div>
                         <div>
-                          <h4 className="text-white text-lg font-semibold mb-2">Global Developer Community</h4>
+                          <h4 className="text-white text-lg font-semibold mb-2">Exclusive Networking</h4>
                           <p className="text-gray-400 leading-relaxed text-base">
-                            Connect with developers worldwide, share solutions, and learn from
-                            the best in the field through our collaborative platform.
+                            Gain access to a network of industry professionals, startup founders,
+                            and mentors who are shaping the future of global industries.
                           </p>
                         </div>
                       </div>
@@ -290,7 +447,7 @@ export default function Index() {
           <div className="container mx-auto px-4">
             <ScrollReveal delay={0.2}>
               <h2 className="text-center text-4xl md:text-6xl font-bold text-white mb-16">
-                Trusted by Developers Worldwide
+                Our Growing Community
               </h2>
             </ScrollReveal>
 
@@ -299,45 +456,45 @@ export default function Index() {
                 <div className="text-center">
                   <CounterAnimation
                     from={0}
-                    to={50000}
+                    to={500}
                     duration={2.5}
                     suffix="+"
                     className="text-4xl md:text-5xl font-bold text-white block"
                   />
-                  <p className="text-gray-400 mt-2 text-sm uppercase tracking-wider">Active Users</p>
+                  <p className="text-gray-400 mt-2 text-sm uppercase tracking-wider">Members</p>
                 </div>
 
                 <div className="text-center">
                   <CounterAnimation
                     from={0}
-                    to={1200}
+                    to={50}
                     duration={2.5}
                     suffix="+"
                     className="text-4xl md:text-5xl font-bold text-white block"
                   />
-                  <p className="text-gray-400 mt-2 text-sm uppercase tracking-wider">Problems Solved</p>
+                  <p className="text-gray-400 mt-2 text-sm uppercase tracking-wider">Projects Launched</p>
                 </div>
 
                 <div className="text-center">
                   <CounterAnimation
                     from={0}
-                    to={99}
+                    to={200}
                     duration={2.5}
-                    suffix=".9%"
+                    suffix="+"
                     className="text-4xl md:text-5xl font-bold text-white block"
                   />
-                  <p className="text-gray-400 mt-2 text-sm uppercase tracking-wider">Uptime</p>
+                  <p className="text-gray-400 mt-2 text-sm uppercase tracking-wider">Events Hosted</p>
                 </div>
 
                 <div className="text-center">
                   <CounterAnimation
                     from={0}
-                    to={15}
+                    to={12}
                     duration={2.5}
-                    suffix="ms"
+                    suffix="+"
                     className="text-4xl md:text-5xl font-bold text-white block"
                   />
-                  <p className="text-gray-400 mt-2 text-sm uppercase tracking-wider">Avg Response</p>
+                  <p className="text-gray-400 mt-2 text-sm uppercase tracking-wider">Industry Partners</p>
                 </div>
               </StaggeredReveal>
             </div>
@@ -350,14 +507,14 @@ export default function Index() {
             <ParallaxSection speed={0.2}>
               <ScrollReveal delay={0.2}>
                 <h2 className="font-display text-[12vw] font-bold leading-none tracking-tighter text-white/10 select-none pointer-events-none">
-                  MEETCODE
+                  INOVX
                 </h2>
               </ScrollReveal>
             </ParallaxSection>
 
             <ScrollReveal delay={0.4}>
               <div className="flex justify-between items-end mt-12 text-gray-500 text-sm font-mono uppercase tracking-widest">
-                <div>© 2025 MeetCode Inc.</div>
+                <div>© 2025 InovX Club.</div>
                 <div className="flex gap-8">
                   <a href="#" className="hover:text-white transition-colors">Privacy</a>
                   <a href="#" className="hover:text-white transition-colors">Terms</a>

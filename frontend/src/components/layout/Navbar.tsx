@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Code2, User, LogOut, Menu, X } from 'lucide-react';
+import { Zap, User, LogOut, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/stores/authStore';
 import { useState } from 'react';
@@ -15,11 +15,11 @@ export function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
             <div className="relative">
-              <Code2 className="h-8 w-8 text-primary transition-all group-hover:text-glow" />
+              <Zap className="h-8 w-8 text-primary transition-all group-hover:text-glow fill-primary/20" />
               <div className="absolute inset-0 blur-lg bg-primary/30 opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
-            <span className="font-display text-xl font-bold tracking-wider text-foreground">
-              CYBER<span className="text-primary">CODE</span>
+            <span className="font-display text-xl font-bold tracking-wider text-white">
+              INOV<span className="text-primary font-black">X</span>
             </span>
           </Link>
 
@@ -28,18 +28,18 @@ export function Navbar() {
             {isAuthenticated ? (
               <>
                 <Link to="/problems">
-                  <Button variant="ghost" className="font-medium">
-                    Problems
+                  <Button variant="ghost" className="font-medium text-gray-300 hover:text-white">
+                    Events
                   </Button>
                 </Link>
                 <Link to="/dashboard">
-                  <Button variant="ghost" className="font-medium">
-                    Dashboard
+                  <Button variant="ghost" className="font-medium text-gray-300 hover:text-white">
+                    Projects
                   </Button>
                 </Link>
                 <Link to="/roadmap">
-                  <Button variant="ghost" className="font-medium">
-                    Roadmap
+                  <Button variant="ghost" className="font-medium text-gray-300 hover:text-white">
+                    Resources
                   </Button>
                 </Link>
                 <div className="flex items-center gap-3 pl-4 border-l border-border">
@@ -83,12 +83,12 @@ export function Navbar() {
                 <>
                   <Link to="/problems" onClick={() => setMobileMenuOpen(false)}>
                     <Button variant="ghost" className="w-full justify-start">
-                      Problems
+                      Events
                     </Button>
                   </Link>
                   <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}>
                     <Button variant="ghost" className="w-full justify-start">
-                      Dashboard
+                      Projects
                     </Button>
                   </Link>
                   <div className="flex items-center justify-between pt-2 border-t border-border/50">

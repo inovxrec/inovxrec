@@ -26,32 +26,30 @@ interface RoadmapStats {
 // Coordinate system: X range [-300, 300], Y range [0, 800]
 // Center is 0, 0 at top. We will translate this to SVG coordinates.
 const nodes: Node[] = [
-    { id: 'arrays', label: 'Arrays & Hashing', x: 0, y: 0, connections: ['two-pointers', 'stack'] },
+    { id: 'foundations', label: 'Tech Foundations', x: 0, y: 0, connections: ['market-research', 'data-structures'] },
 
-    { id: 'two-pointers', label: 'Two Pointers', x: -150, y: 120, connections: ['binary-search', 'sliding-window', 'linked-list'] },
-    { id: 'stack', label: 'Stack', x: 150, y: 120, connections: [] },
+    { id: 'market-research', label: 'Market Research', x: -150, y: 120, connections: ['product-strategy', 'innovation-lab'] },
+    { id: 'data-structures', label: 'Data Structures', x: 150, y: 120, connections: ['algorithm-design'] },
 
-    { id: 'binary-search', label: 'Binary Search', x: -280, y: 240, connections: ['trees'] },
-    { id: 'sliding-window', label: 'Sliding Window', x: -80, y: 240, connections: ['trees'] },
-    { id: 'linked-list', label: 'Linked List', x: 120, y: 240, connections: ['trees'] },
+    { id: 'product-strategy', label: 'Product Strategy', x: -280, y: 240, connections: ['ux-design'] },
+    { id: 'innovation-lab', label: 'Innovation Lab', x: -80, y: 240, connections: ['venture-capital'] },
+    { id: 'algorithm-design', label: 'Algorithm Design', x: 120, y: 240, connections: ['system-architecture'] },
 
-    { id: 'trees', label: 'Trees', x: -80, y: 360, connections: ['tries', 'heap', 'backtracking'] },
+    { id: 'ux-design', label: 'UX & User Psychology', x: -80, y: 360, connections: ['marketing-ops', 'fintech'] },
 
-    { id: 'tries', label: 'Tries', x: -280, y: 480, connections: [] },
-    { id: 'heap', label: 'Heap / Priority Queue', x: -80, y: 480, connections: ['intervals', 'greedy', 'advanced-graphs'] },
-    { id: 'backtracking', label: 'Backtracking', x: 220, y: 480, connections: ['graphs', '1d-dp'] },
+    { id: 'venture-capital', label: 'Venture Capital', x: -280, y: 480, connections: [] },
+    { id: 'system-architecture', label: 'Scalable Systems', x: -80, y: 480, connections: ['cloud-ops', 'risk-management'] },
+    { id: 'marketing-ops', label: 'Growth Marketing', x: 220, y: 480, connections: ['sales-strategy'] },
 
-    { id: 'intervals', label: 'Intervals', x: -320, y: 600, connections: [] },
-    { id: 'greedy', label: 'Greedy', x: -120, y: 600, connections: [] },
-    { id: 'advanced-graphs', label: 'Advanced Graphs', x: 80, y: 600, connections: [] },
+    { id: 'fintech', label: 'Financial Modeling', x: -320, y: 600, connections: [] },
+    { id: 'cloud-ops', label: 'Cloud Operations', x: -120, y: 600, connections: [] },
+    { id: 'risk-management', label: 'Risk Management', x: 80, y: 600, connections: [] },
 
-    { id: 'graphs', label: 'Graphs', x: 280, y: 600, connections: ['2d-dp'] },
-    { id: '1d-dp', label: '1-D DP', x: 480, y: 600, connections: ['2d-dp', 'bit-manipulation'] },
+    { id: 'sales-strategy', label: 'Sales Strategy', x: 280, y: 600, connections: ['leadership'] },
+    { id: 'leadership', label: 'Executive Leadership', x: 480, y: 600, connections: ['business-exit'] },
 
-    { id: '2d-dp', label: '2-D DP', x: 380, y: 720, connections: ['math'] },
-    { id: 'bit-manipulation', label: 'Bit Manipulation', x: 580, y: 720, connections: ['math'] },
-
-    { id: 'math', label: 'Math & Geometry', x: 480, y: 840, connections: [] },
+    { id: 'business-exit', label: 'IPO & Exit Strategy', x: 380, y: 720, connections: ['global-expansion'] },
+    { id: 'global-expansion', label: 'Global Expansion', x: 580, y: 720, connections: [] },
 ];
 
 const NODE_WIDTH = 180;

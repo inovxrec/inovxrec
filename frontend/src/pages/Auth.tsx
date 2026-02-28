@@ -33,10 +33,10 @@ export default function AuthPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const mode = searchParams.get('mode') || 'login';
   const isLogin = mode === 'login';
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const navigate = useNavigate();
   const { login, signup, isAuthenticated } = useAuthStore();
   const { toast } = useToast();
@@ -92,7 +92,7 @@ export default function AuthPage() {
       if (success) {
         toast({
           title: 'Account created!',
-          description: 'Welcome to CyberCode.',
+          description: 'Welcome to InovX Club.',
         });
         navigate('/problems');
       } else {
@@ -133,12 +133,12 @@ export default function AuthPage() {
               {isLogin ? 'ACCESS_GRANTED' : 'INITIALIZE'}
             </CardTitle>
             <CardDescription className="text-muted-foreground">
-              {isLogin 
-                ? 'Enter your credentials to continue' 
-                : 'Create your account to start coding'}
+              {isLogin
+                ? 'Enter your credentials to continue'
+                : 'Create your account to join the community'}
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent className="pt-6">
             {isLogin ? (
               <Form {...loginForm}>
@@ -152,10 +152,10 @@ export default function AuthPage() {
                         <FormControl>
                           <div className="relative">
                             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input 
-                              placeholder="neo@matrix.io" 
-                              className="pl-10" 
-                              {...field} 
+                            <Input
+                              placeholder="neo@matrix.io"
+                              className="pl-10"
+                              {...field}
                             />
                           </div>
                         </FormControl>
@@ -163,7 +163,7 @@ export default function AuthPage() {
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={loginForm.control}
                     name="password"
@@ -173,11 +173,11 @@ export default function AuthPage() {
                         <FormControl>
                           <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input 
+                            <Input
                               type={showPassword ? 'text' : 'password'}
-                              placeholder="••••••••" 
-                              className="pl-10 pr-10" 
-                              {...field} 
+                              placeholder="••••••••"
+                              className="pl-10 pr-10"
+                              {...field}
                             />
                             <button
                               type="button"
@@ -192,10 +192,10 @@ export default function AuthPage() {
                       </FormItem>
                     )}
                   />
-                  
-                  <Button 
-                    type="submit" 
-                    className="w-full mt-6" 
+
+                  <Button
+                    type="submit"
+                    className="w-full mt-6"
                     size="lg"
                     disabled={isLoading}
                   >
@@ -222,10 +222,10 @@ export default function AuthPage() {
                         <FormControl>
                           <div className="relative">
                             <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input 
-                              placeholder="cybercoder" 
-                              className="pl-10" 
-                              {...field} 
+                            <Input
+                              placeholder="innovator_101"
+                              className="pl-10"
+                              {...field}
                             />
                           </div>
                         </FormControl>
@@ -233,7 +233,7 @@ export default function AuthPage() {
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={signupForm.control}
                     name="email"
@@ -243,10 +243,10 @@ export default function AuthPage() {
                         <FormControl>
                           <div className="relative">
                             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input 
-                              placeholder="neo@matrix.io" 
-                              className="pl-10" 
-                              {...field} 
+                            <Input
+                              placeholder="neo@matrix.io"
+                              className="pl-10"
+                              {...field}
                             />
                           </div>
                         </FormControl>
@@ -254,7 +254,7 @@ export default function AuthPage() {
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={signupForm.control}
                     name="password"
@@ -264,11 +264,11 @@ export default function AuthPage() {
                         <FormControl>
                           <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input 
+                            <Input
                               type={showPassword ? 'text' : 'password'}
-                              placeholder="••••••••" 
-                              className="pl-10 pr-10" 
-                              {...field} 
+                              placeholder="••••••••"
+                              className="pl-10 pr-10"
+                              {...field}
                             />
                             <button
                               type="button"
@@ -283,7 +283,7 @@ export default function AuthPage() {
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={signupForm.control}
                     name="confirmPassword"
@@ -293,11 +293,11 @@ export default function AuthPage() {
                         <FormControl>
                           <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input 
+                            <Input
                               type={showPassword ? 'text' : 'password'}
-                              placeholder="••••••••" 
-                              className="pl-10" 
-                              {...field} 
+                              placeholder="••••••••"
+                              className="pl-10"
+                              {...field}
                             />
                           </div>
                         </FormControl>
@@ -305,10 +305,10 @@ export default function AuthPage() {
                       </FormItem>
                     )}
                   />
-                  
-                  <Button 
-                    type="submit" 
-                    className="w-full mt-6" 
+
+                  <Button
+                    type="submit"
+                    className="w-full mt-6"
                     size="lg"
                     disabled={isLoading}
                   >
@@ -324,7 +324,7 @@ export default function AuthPage() {
                 </form>
               </Form>
             )}
-            
+
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
                 {isLogin ? "Don't have an account?" : 'Already have an account?'}
