@@ -12,6 +12,10 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import AddProblem from "./pages/AddProblem";
+import Events from "./pages/Events";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Projects from "./pages/Projects";
 import ScrollProgress from "./components/animations/ScrollProgress";
 import SmoothScroll from "./components/animations/SmoothScroll";
 
@@ -31,7 +35,11 @@ const App = () => (
             <Route element={<MainLayout />}>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/projects" element={<Projects />} />
               <Route path="/problems" element={<Problems />} />
+              <Route path="/events" element={<Events />} />
               <Route path="/problem/:slug" element={<ProblemDetail />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/roadmap" element={<Roadmap />} />

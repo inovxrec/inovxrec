@@ -1,0 +1,11 @@
+const express = require('express');
+const router = express.Router();
+const { createEnquiry, getEnquiries, updateEnquiryStatus, deleteEnquiry } = require('../controllers/enquiryController');
+
+// Routes
+router.post('/', createEnquiry);
+router.get('/', getEnquiries);
+router.put('/:id', updateEnquiryStatus);
+router.delete('/:id', deleteEnquiry);
+
+module.exports = router;

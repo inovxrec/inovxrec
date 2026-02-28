@@ -30,23 +30,22 @@ export default function ExovanceHero() {
                 lightSpread={0.6}
             />
 
-            <motion.div style={{ y, opacity }} className="relative z-10 text-center px-4">
+            <motion.div style={{ y, opacity }} className="relative z-10 text-center px-6 md:px-4 max-w-[100vw]">
                 <div className="mb-4 flex items-center justify-center gap-2">
-                    <div className="h-[1px] w-12 bg-white/50"></div>
-                    <span className="text-white text-sm tracking-[0.5em] font-light uppercase">We Hatch Better</span>
-                    <div className="h-[1px] w-12 bg-white/50"></div>
+                    <div className="h-[1px] w-8 md:w-12 bg-white/50"></div>
+                    <span className="text-white text-[10px] md:text-sm tracking-[0.3em] md:tracking-[0.5em] font-light uppercase">We Hatch Better</span>
+                    <div className="h-[1px] w-8 md:w-12 bg-white/50"></div>
                 </div>
 
-                <h1 className="font-display text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter leading-none mb-6 mix-blend-difference">
+                <h1 className="font-display text-5xl xs:text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tighter leading-none mb-6 mix-blend-difference overflow-hidden">
                     <TextReveal delay={0.1}>INOVX</TextReveal>
-
                 </h1>
 
-                <p className="max-w-2xl mx-auto text-gray-400 text-lg md:text-xl font-light tracking-wide leading-relaxed">
-                    <TextReveal delay={0.2}>
+                <p className="max-w-2xl mx-auto text-gray-400 text-base md:text-xl font-light tracking-wide leading-relaxed px-4">
+                    <TextReveal delay={0.4}>
                         Where technology meets business strategy.
                     </TextReveal>
-                    <TextReveal delay={0.3}>
+                    <TextReveal delay={0.5}>
                         Empowering the next generation of innovators.
                     </TextReveal>
                 </p>
@@ -58,22 +57,22 @@ export default function ExovanceHero() {
                     className="mt-12 flex flex-col items-center"
                 >
                     {/* Futuristic Status Indicator */}
-                    <div className="relative flex flex-col md:flex-row items-center gap-4 mb-8">
+                    <div className="relative flex flex-col items-center gap-4 mb-8">
                         <div className="flex-shrink-0 relative">
-                            <div className="w-2.5 h-2.5 rounded-full bg-primary animate-ping absolute inset-0 opacity-40" />
-                            <div className="w-2.5 h-2.5 rounded-full bg-primary relative" />
+                            <div className="w-2 rounded-full bg-primary animate-ping absolute inset-0 opacity-40" />
+                            <div className="w-2 h-2 rounded-full bg-primary relative" />
                         </div>
 
-                        <div className="text-xl md:text-2xl font-display text-white/90 tracking-tight text-center md:text-left min-h-[1.5em] flex items-center">
+                        <div className="text-base sm:text-lg md:text-2xl font-display text-white/90 tracking-tight text-center px-4 min-h-[3em] flex items-center">
                             <TextType
                                 text={[
                                     "Welcome to InovX — Where Tech meets Business Strategy.", "Join the next generation of innovators.", "Engineering the future of enterprise."
                                 ]}
-                                typingSpeed={60}
+                                typingSpeed={50}
                                 pauseDuration={2000}
                                 showCursor
                                 cursorCharacter="▋"
-                                className="leading-none drop-shadow-[0_0_15px_rgba(255,255,255,0.15)]"
+                                className="leading-tight drop-shadow-[0_0_15px_rgba(255,255,255,0.15)] max-w-sm md:max-w-none"
                             />
                         </div>
                     </div>

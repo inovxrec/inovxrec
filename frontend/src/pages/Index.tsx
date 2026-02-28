@@ -83,7 +83,7 @@ export default function Index() {
 
 
         {/* Philosophy / About Section */}
-        <section className="py-32 px-4 relative z-10 bg-black scroll-optimized">
+        <section id="about" className="py-32 px-4 relative z-10 bg-black scroll-optimized">
           <div className="container mx-auto">
             <div className="grid md:grid-cols-2 gap-16 items-start">
               <div>
@@ -94,7 +94,7 @@ export default function Index() {
                 </ScrollReveal>
                 <div className="sticky top-32">
                   <ScrollReveal delay={0.4} once={true}>
-                    <p className="text-4xl md:text-5xl font-light leading-tight tracking-tight">
+                    <p className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-light leading-snug tracking-tight">
                       <span className="text-gray-500">We believe in</span>{' '}
                       <TypewriterText
                         text="the synergy"
@@ -173,7 +173,18 @@ export default function Index() {
         {/* Mission & Vision Section */}
         <section id="vision-mission" className="py-24 px-4 relative z-10 bg-black scroll-optimized">
           <div className="container mx-auto max-w-5xl">
+            <ScrollReveal delay={0.1} once={true}>
+              <div className="mb-16 max-w-4xl">
+                <h2 className="text-primary font-mono text-sm tracking-widest uppercase mb-6">Who We Are</h2>
+                <p className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light leading-snug tracking-tight text-white/90">
+                  We are a student-led departmental club <span className="text-gray-500">bridging the gap between</span> <span className="text-white">technical skills</span> and <span className="text-white">business acumen</span>, preparing the next generation of tech entrepreneurs.
+                </p>
+              </div>
+            </ScrollReveal>
+
+
             <div className="grid md:grid-cols-2 gap-8">
+
               <ScrollReveal direction="right" once={true} delay={0.2}>
                 <div className="group relative p-8 h-full bg-[#0a0a0a] border border-white/5 rounded-xl hover:border-primary/20 transition-all duration-500 overflow-hidden">
                   {/* Decorative Elements */}
@@ -242,13 +253,13 @@ export default function Index() {
         </section>
 
         {/* Events Carousel Section */}
-        <section className="py-32 px-4 relative z-10 bg-black overflow-hidden">
+        <section id="events" className="py-32 px-4 relative z-10 bg-black overflow-hidden">
           <div className="container mx-auto">
             <ScrollReveal delay={0.2} once={true}>
               <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
                 <div>
                   <h2 className="text-sm font-mono text-primary mb-4 tracking-[0.3em] uppercase">Club Life</h2>
-                  <h3 className="text-4xl md:text-6xl font-display font-bold tracking-tighter">
+                  <h3 className="text-3xl xs:text-4xl md:text-6xl font-display font-bold tracking-tighter">
                     VIBRANT_<span className="text-primary">EVENTS</span>
                   </h3>
                 </div>
@@ -317,7 +328,7 @@ export default function Index() {
         </section>
 
         {/* Selected Works / Features */}
-        <section className="py-20 bg-black relative z-10 overflow-hidden min-h-screen flex items-center">
+        <section id="projects" className="py-32 bg-black relative z-10 overflow-hidden min-h-screen flex items-center">
           <div className="container mx-auto px-4">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               {/* Left Side: Text Content */}
@@ -328,7 +339,7 @@ export default function Index() {
                       <h2 className="text-primary font-mono text-sm tracking-widest uppercase mb-4">
                         Why InovX?
                       </h2>
-                      <h3 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight font-display">
+                      <h3 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 leading-tight font-display">
                         Bridging The Gap Between Ideas and Execution
                       </h3>
                     </div>
@@ -446,7 +457,7 @@ export default function Index() {
         <section className="py-32 bg-black relative z-10">
           <div className="container mx-auto px-4">
             <ScrollReveal delay={0.2}>
-              <h2 className="text-center text-4xl md:text-6xl font-bold text-white mb-16">
+              <h2 className="text-center text-3xl xs:text-4xl md:text-6xl font-bold text-white mb-16">
                 Our Growing Community
               </h2>
             </ScrollReveal>
@@ -502,7 +513,7 @@ export default function Index() {
         </section>
 
         {/* Footer Minimalist */}
-        <footer className="py-20 bg-black border-t border-white/10">
+        <footer id="contact" className="py-20 bg-black border-t border-white/10">
           <div className="container mx-auto px-4 text-center">
             <ParallaxSection speed={0.2}>
               <ScrollReveal delay={0.2}>
