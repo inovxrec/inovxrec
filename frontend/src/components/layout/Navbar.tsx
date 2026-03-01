@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Zap, User, LogOut, Menu, X } from 'lucide-react';
+import { User, LogOut, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/stores/authStore';
 import { useState } from 'react';
@@ -14,13 +14,7 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="relative">
-              <Zap className="h-8 w-8 text-primary transition-all group-hover:text-glow fill-primary/20" />
-              <div className="absolute inset-0 blur-lg bg-primary/30 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <span className="font-display text-xl font-bold tracking-wider text-white">
-              INOV<span className="text-primary font-black">X</span>
-            </span>
+            <img src="/in.png" alt="InovX Logo" className="h-12 w-auto transition-transform duration-300 group-hover:scale-105" />
           </Link>
 
           <div className="hidden md:flex items-center gap-6">
