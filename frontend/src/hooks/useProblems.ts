@@ -38,7 +38,7 @@ export const useProblems = () => {
             // NOTE: fetching all might be paginated. For now assuming page size covers it or we map results?
             // Since backend has pagination, this might return { count, next, previous, results: [] }
             // We should handle that.
-            const { data } = await api.get('/problems/');
+            const { data } = await api.get('/problems');
             if (data.results) {
                 return data.results as ProblemListResponse[];
             }
@@ -51,7 +51,7 @@ export const useProblem = (slug: string) => {
     return useQuery({
         queryKey: ['problem', slug],
         queryFn: async () => {
-            const { data } = await api.get<ProblemDetailResponse>(`/problems/${slug}/`);
+            const { data } = await api.get<ProblemDetailResponse>(`/problems/${slug}`);
             // Map backend snake_case to frontend camelCase
             return {
                 ...data,
@@ -67,7 +67,7 @@ export const useProblemTags = () => {
     return useQuery({
         queryKey: ['problemTags'],
         queryFn: async () => {
-            const { data } = await api.get<{ id: number, name: string }[]>('/problems/tags/');
+            const { data } = await api.get<{ id: number, name: string }[]>('/problems/tags');
             return data.map(t => t.name);
         }
     });
@@ -77,7 +77,7 @@ export const useProblemStats = () => {
     return useQuery({
         queryKey: ['problemStats'],
         queryFn: async () => {
-            const { data } = await api.get<ProblemStatsResponse>('/problems/stats/');
+            const { data } = await api.get<ProblemStatsResponse>('/problems/stats');
             return data;
         }
     });

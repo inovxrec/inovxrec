@@ -8,6 +8,7 @@ interface AuthState {
     id: string;
     username: string;
     email: string;
+    is_staff: boolean;
   } | null;
   token: string | null;
   login: (email: string, password: string) => Promise<boolean>;
@@ -23,7 +24,7 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       login: async (email: string, password: string) => {
         try {
-          const response = await api.post('/auth/login/', { email, password });
+          const response = await api.post('/auth/login', { email, password });
 
           if (response.data && response.data.tokens) {
             set({
@@ -41,12 +42,11 @@ export const useAuthStore = create<AuthState>()(
       },
       signup: async (username: string, email: string, password: string) => {
         try {
-          // Django requires confirm_password
-          const response = await api.post('/auth/register/', {
+          // Previously Django required confirm_password, Node doesn't but we'll send it for compatibility or cleanup
+          const response = await api.post('/auth/register', {
             username,
             email,
             password,
-            confirm_password: password
           });
 
           if (response.data && response.data.tokens) {

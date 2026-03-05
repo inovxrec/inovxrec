@@ -72,7 +72,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'id', 'username', 'email', 'total_solved', 'easy_solved', 
+            'id', 'username', 'email', 'is_staff', 'total_solved', 'easy_solved', 
             'medium_solved', 'hard_solved', 'streak', 'acceptance_rate',
             'created_at'
         )

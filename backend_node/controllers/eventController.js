@@ -10,6 +10,16 @@ exports.getEvents = async (req, res) => {
     }
 };
 
+// Get the latest live event
+exports.getLiveEvent = async (req, res) => {
+    try {
+        const liveEvent = await Event.findOne({ isLive: true }).sort({ createdAt: -1 });
+        res.status(200).json(liveEvent);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 // Create a new event
 exports.createEvent = async (req, res) => {
     try {
@@ -17,7 +27,10 @@ exports.createEvent = async (req, res) => {
         const imageUrl = req.file ? req.file.path : null;
 
         const newEvent = new Event({
-            date, title, description, location, category, color, icon, image: imageUrl
+            date, title, description, location, category, color, icon,
+            image: imageUrl,
+            isLive: req.body.isLive === 'true' || req.body.isLive === true,
+            liveLink: req.body.liveLink
         });
 
         const savedEvent = await newEvent.save();

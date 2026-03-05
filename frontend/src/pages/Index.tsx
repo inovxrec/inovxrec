@@ -24,10 +24,41 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import { useQuery } from '@tanstack/react-query';
+import { inovxApi } from '@/lib/inovxApi';
+import { ExternalLink, Radio, TrendingUp } from 'lucide-react';
 
 export default function Index() {
   const { isAuthenticated } = useAuthStore();
 
+  const { data: liveEvent, isLoading: liveLoading } = useQuery({
+    queryKey: ['liveEvent'],
+    queryFn: inovxApi.getLiveEvent,
+    refetchInterval: 60000, // Poll every minute
+  });
+
+  const SAMPLE_LIVE_EVENT = {
+    _id: "sample-1",
+    title: "Workshop: Building Scalable Startups",
+    description: "Join us live for an elite session on transforming technical prototypes into multi-million dollar business models. Featuring industry leaders from top tech titans.",
+    image: "/business_strategy_event_1772289721670.png",
+    liveLink: "#",
+    isLive: true
+  };
+
+  const activeLiveEvent = liveEvent || SAMPLE_LIVE_EVENT;
+
+  const { data: statsData } = useQuery({
+    queryKey: ['statistics'],
+    queryFn: inovxApi.getStatistics,
+  });
+
+  const displayStats = statsData?.length ? statsData : [
+    { label: "Members", value: 500, suffix: "+" },
+    { label: "Projects Launched", value: 50, suffix: "+" },
+    { label: "Events Hosted", value: 200, suffix: "+" },
+    { label: "Industry Partners", value: 12, suffix: "+" },
+  ];
   const CARDS = [
     {
       id: 0,
@@ -73,11 +104,96 @@ export default function Index() {
 
   return (
     <div className="relative min-h-screen bg-black text-white selection:bg-white/30 selection:text-white scroll-optimized">
+      <div className="noise-overlay" />
       <CursorFollower />
       <FloatingElements count={15} />
 
       <main className="scroll-optimized">
         <ExovanceHero />
+
+        {/* Live Event Section */}
+        {activeLiveEvent && (
+          <section className="relative z-20 -mt-20 mb-32 px-4 group">
+            <div className="container mx-auto max-w-6xl">
+              <ScrollReveal delay={0.1} once={true}>
+                <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.02] backdrop-blur-3xl p-1 shadow-2xl transition-all duration-500 hover:border-white/20 hover:bg-white/[0.04]">
+                  {/* Glowing background */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5 opacity-50" />
+
+                  {/* Cyber dots background */}
+                  <div className="absolute inset-0 opacity-10 [background-image:radial-gradient(circle,white_1px,transparent_1px)] [background-size:20px_20px]" />
+
+                  <div className="relative flex flex-col lg:flex-row items-stretch gap-0 rounded-[2.4rem] overflow-hidden bg-black/40">
+                    {/* Image Section */}
+                    <div className="w-full lg:w-2/5 relative overflow-hidden group/img min-h-[300px]">
+                      {activeLiveEvent.image ? (
+                        <img
+                          src={activeLiveEvent.image}
+                          alt={activeLiveEvent.title}
+                          className="w-full h-full object-cover transition-transform duration-1000 group-hover/img:scale-110"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-white/5">
+                          <Radio className="w-12 h-12 text-white/20" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-black/80 via-transparent to-transparent lg:from-black/60" />
+
+                      {/* Live Badge */}
+                      <div className="absolute top-8 left-8 flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-mono tracking-[0.2em] uppercase backdrop-blur-md">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                        </span>
+                        Live Now
+                      </div>
+                    </div>
+
+                    {/* Content Section */}
+                    <div className="flex-1 p-8 md:p-12 lg:p-16 flex flex-col justify-center space-y-6 relative">
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3">
+                          <div className="h-[1px] w-8 bg-white/30" />
+                          <h4 className="text-white/40 font-mono text-[10px] tracking-[0.4em] uppercase">Featured Broadcast</h4>
+                        </div>
+                        <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter text-white leading-[1.1]">
+                          {activeLiveEvent.title}
+                        </h3>
+                      </div>
+
+                      <p className="text-gray-400 text-lg md:text-xl font-light leading-relaxed max-w-2xl border-l-2 border-white/10 pl-6 italic">
+                        "{activeLiveEvent.description}"
+                      </p>
+
+                      <div className="flex flex-wrap gap-6 pt-6">
+                        {activeLiveEvent.liveLink && (
+                          <a
+                            href={activeLiveEvent.liveLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <MagneticHover>
+                              <Button className="rounded-full bg-white text-black hover:bg-gray-200 px-10 py-7 h-auto text-lg font-bold shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all active:scale-95">
+                                Join Session <ExternalLink className="ml-2 h-5 w-5" />
+                              </Button>
+                            </MagneticHover>
+                          </a>
+                        )}
+                        <Link to="/events">
+                          <MagneticHover>
+                            <Button variant="outline" className="rounded-full border-white/10 hover:bg-white/5 hover:border-white/30 px-10 py-7 h-auto text-lg font-medium transition-all">
+                              Archives
+                            </Button>
+                          </MagneticHover>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ScrollReveal>
+            </div>
+          </section>
+        )}
 
         {/* Global Announcement / Ticker */}
 
@@ -270,7 +386,7 @@ export default function Index() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.4} once={true}>
-              <div className="relative px-12">
+              <div className="relative px-4 md:px-12">
                 <Carousel
                   opts={{
                     align: "start",
@@ -283,44 +399,63 @@ export default function Index() {
                   ]}
                   className="w-full"
                 >
-                  <CarouselContent className="-ml-4">
+                  <CarouselContent className="-ml-6">
                     {[
                       {
                         title: "InovX Hackathon 2025",
+                        category: "HACKATHON",
                         desc: "48 hours of intense coding and product building.",
-                        img: "/hackathon_event_1772289703083.png"
+                        img: "/hackathon_event_1772289703083.png",
+                        date: "MAR 2025"
                       },
                       {
                         title: "Strategy Spotlight",
+                        category: "WORKSHOP",
                         desc: "Mastering the art of business scaling and financial modeling.",
-                        img: "/business_strategy_event_1772289721670.png"
+                        img: "/business_strategy_event_1772289721670.png",
+                        date: "APR 2025"
                       },
                       {
                         title: "Leaders Connect",
+                        category: "MEETUP",
                         desc: "Exclusive networking with tech founders and industry titans.",
-                        img: "/networking_event_inovx_1772289739248.png"
+                        img: "/networking_event_inovx_1772289739248.png",
+                        date: "JUN 2025"
                       }
                     ].map((event, index) => (
-                      <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
-                        <div className="group relative aspect-[16/10] overflow-hidden rounded-2xl border border-white/5 bg-[#0a0a0a]">
+                      <CarouselItem key={index} className="pl-6 md:basis-1/2 lg:basis-1/3">
+                        <div className="group relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 bg-[#050505] transition-all duration-500 hover:border-white/20 hover:shadow-2xl hover:shadow-white/5">
                           <img
                             src={event.img}
                             alt={event.title}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100"
+                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-40 group-hover:opacity-60"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80 group-hover:opacity-40 transition-opacity" />
-                          <div className="absolute bottom-0 left-0 p-8 w-full translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                            <h4 className="text-xl font-bold mb-2 tracking-tight text-white">{event.title}</h4>
-                            <p className="text-gray-400 text-sm font-light opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90" />
+
+                          <div className="absolute top-6 right-6 font-mono text-[10px] text-white/40 tracking-[0.2em]">
+                            {event.date}
+                          </div>
+
+                          <div className="absolute bottom-0 left-0 p-8 w-full space-y-4">
+                            <span className="inline-block px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] font-mono tracking-widest text-primary uppercase">
+                              {event.category}
+                            </span>
+                            <h4 className="text-2xl font-bold tracking-tight text-white group-hover:text-primary transition-colors">
+                              {event.title}
+                            </h4>
+                            <p className="text-gray-400 text-sm font-light leading-relaxed max-w-[280px] opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
                               {event.desc}
                             </p>
+                            <div className="pt-4 flex items-center gap-2 text-white text-[10px] font-mono tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-700 delay-100">
+                              VIEW_DETAILS <ArrowRight className="w-3 h-3 group-hover:translate-x-2 transition-transform" />
+                            </div>
                           </div>
                         </div>
                       </CarouselItem>
                     ))}
                   </CarouselContent>
-                  <CarouselPrevious className="hidden md:flex -left-6 bg-black/50 border-white/10 hover:bg-primary hover:border-primary text-white" />
-                  <CarouselNext className="hidden md:flex -right-6 bg-black/50 border-white/10 hover:bg-primary hover:border-primary text-white" />
+                  <CarouselPrevious className="hidden md:flex -left-6 bg-black/50 border-white/10 hover:bg-white hover:text-black transition-colors" />
+                  <CarouselNext className="hidden md:flex -right-6 bg-black/50 border-white/10 hover:bg-white hover:text-black transition-colors" />
                 </Carousel>
               </div>
             </ScrollReveal>
@@ -454,59 +589,43 @@ export default function Index() {
         </div>
 
         {/* Statistics Section */}
-        <section className="py-32 bg-black relative z-10">
-          <div className="container mx-auto px-4">
+        <section className="py-40 bg-black relative z-10 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.02] to-transparent" />
+          <div className="container mx-auto px-4 relative z-10">
             <ScrollReveal delay={0.2}>
-              <h2 className="text-center text-3xl xs:text-4xl md:text-6xl font-bold text-white mb-16">
-                Our Growing Community
-              </h2>
+              <div className="text-center mb-24 space-y-4">
+                <h2 className="text-primary font-mono text-sm tracking-[0.5em] uppercase">Impact Metrics</h2>
+                <h3 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white tracking-tighter">
+                  THE_POWER_OF_<span className="italic text-primary">COMMUNITY</span>
+                </h3>
+              </div>
             </ScrollReveal>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-              <StaggeredReveal staggerDelay={0.2}>
-                <div className="text-center">
-                  <CounterAnimation
-                    from={0}
-                    to={500}
-                    duration={2.5}
-                    suffix="+"
-                    className="text-4xl md:text-5xl font-bold text-white block"
-                  />
-                  <p className="text-gray-400 mt-2 text-sm uppercase tracking-wider">Members</p>
-                </div>
-
-                <div className="text-center">
-                  <CounterAnimation
-                    from={0}
-                    to={50}
-                    duration={2.5}
-                    suffix="+"
-                    className="text-4xl md:text-5xl font-bold text-white block"
-                  />
-                  <p className="text-gray-400 mt-2 text-sm uppercase tracking-wider">Projects Launched</p>
-                </div>
-
-                <div className="text-center">
-                  <CounterAnimation
-                    from={0}
-                    to={200}
-                    duration={2.5}
-                    suffix="+"
-                    className="text-4xl md:text-5xl font-bold text-white block"
-                  />
-                  <p className="text-gray-400 mt-2 text-sm uppercase tracking-wider">Events Hosted</p>
-                </div>
-
-                <div className="text-center">
-                  <CounterAnimation
-                    from={0}
-                    to={12}
-                    duration={2.5}
-                    suffix="+"
-                    className="text-4xl md:text-5xl font-bold text-white block"
-                  />
-                  <p className="text-gray-400 mt-2 text-sm uppercase tracking-wider">Industry Partners</p>
-                </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+              <StaggeredReveal staggerDelay={0.1}>
+                {displayStats.map((stat: any, i: number) => (
+                  <div key={i} className="group relative p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-white/20 transition-all duration-500 hover:-translate-y-2">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-[2rem]" />
+                    <div className="relative z-10 space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-primary group-hover:text-black transition-all duration-500">
+                          <TrendingUp className="w-5 h-5" />
+                        </div>
+                        <div className="text-[10px] font-mono text-white/20 tracking-widest">0{i + 1}</div>
+                      </div>
+                      <div>
+                        <CounterAnimation
+                          from={0}
+                          to={stat.value}
+                          duration={2.5}
+                          suffix={stat.suffix || "+"}
+                          className="text-5xl md:text-6xl font-bold text-white block tracking-tighter"
+                        />
+                        <p className="text-gray-500 mt-2 text-xs uppercase tracking-[0.2em] font-medium group-hover:text-gray-300 transition-colors">{stat.label}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </StaggeredReveal>
             </div>
           </div>

@@ -9,6 +9,8 @@ const eventSchema = new mongoose.Schema({
     image: { type: String },
     icon: { type: String, default: "Calendar" },
     color: { type: String, default: "bg-primary" },
+    isLive: { type: Boolean, default: false },
+    liveLink: { type: String },
     createdAt: { type: Date, default: Date.now }
 });
 

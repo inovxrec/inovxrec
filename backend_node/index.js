@@ -7,12 +7,13 @@ const eventRoutes = require('./routes/eventRoutes');
 const teamRoutes = require('./routes/teamRoutes');
 const enquiryRoutes = require('./routes/enquiryRoutes');
 const statisticRoutes = require('./routes/statisticRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 // Initialize Express app
 const app = express();
 
 // Connect to MongoDB
-connectDB();
+// connectDB();
 
 // Middleware
 app.use(cors());
@@ -30,6 +31,7 @@ app.use('/api/events', eventRoutes);
 app.use('/api/team', teamRoutes);
 app.use('/api/enquiries', enquiryRoutes);
 app.use('/api/statistics', statisticRoutes);
+app.use('/api/auth', authRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

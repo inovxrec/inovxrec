@@ -9,9 +9,9 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
+    <nav className="sticky top-0 z-50 glass-navbar py-2 transition-all duration-300">
+      <div className="container mx-auto px-6">
+        <div className="flex h-20 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
             <img src="/in.png" alt="InovX Logo" className="h-12 w-auto transition-transform duration-300 group-hover:scale-105" />
@@ -23,6 +23,9 @@ export function Navbar() {
             <Link to="/projects" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Projects</Link>
             <Link to="/events" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Events</Link>
             <Link to="/contact" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Contact</Link>
+            {isAuthenticated && (
+              <Link to="/admin" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">Admin</Link>
+            )}
 
             <div className="h-6 w-px bg-white/10 mx-2" />
 
@@ -68,6 +71,9 @@ export function Navbar() {
               <Link to="/projects" className="text-lg px-4 py-2 hover:bg-white/5 rounded-lg transition-colors" onClick={() => setMobileMenuOpen(false)}>Projects</Link>
               <Link to="/events" className="text-lg px-4 py-2 hover:bg-white/5 rounded-lg transition-colors" onClick={() => setMobileMenuOpen(false)}>Events</Link>
               <Link to="/contact" className="text-lg px-4 py-2 hover:bg-white/5 rounded-lg transition-colors" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
+              {isAuthenticated && (
+                <Link to="/admin" className="text-lg px-4 py-2 text-primary hover:bg-white/5 rounded-lg transition-colors" onClick={() => setMobileMenuOpen(false)}>Admin</Link>
+              )}
 
               <div className="h-px bg-white/5 my-2" />
 
