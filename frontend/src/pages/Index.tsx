@@ -26,7 +26,15 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 import { useQuery } from '@tanstack/react-query';
 import { inovxApi } from '@/lib/inovxApi';
-import { ExternalLink, Radio, TrendingUp } from 'lucide-react';
+import { ExternalLink, Radio, TrendingUp, Cpu } from 'lucide-react';
+import HorizontalScroll from '@/components/animations/HorizontalScroll';
+
+
+
+import GallerySection from '@/component/GallerySection';
+
+
+
 
 export default function Index() {
   const { isAuthenticated } = useAuthStore();
@@ -51,6 +59,11 @@ export default function Index() {
   const { data: statsData } = useQuery({
     queryKey: ['statistics'],
     queryFn: inovxApi.getStatistics,
+  });
+
+  const { data: config } = useQuery({
+    queryKey: ['config'],
+    queryFn: inovxApi.getConfig,
   });
 
   const displayStats = statsData?.length ? statsData : [
@@ -199,9 +212,33 @@ export default function Index() {
 
 
         {/* Philosophy / About Section */}
-        <section id="about" className="py-32 px-4 relative z-10 bg-black scroll-optimized">
-          <div className="container mx-auto">
+        <section id="about" className="py-40 px-4 relative z-10 bg-black overflow-hidden scroll-optimized">
+          {/* Background Video */}
+          <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover grayscale"
+            >
+              <source src="https://res.cloudinary.com/domzonhmn/video/upload/v1772988439/0223_xwacoq.mp4" type="video/mp4" />
+            </video>
+            <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black" />
+          </div>
+
+          <div className="container mx-auto relative z-10">
+            {/* HUD Callouts */}
+            <div className="absolute top-0 right-0 hidden lg:block text-[10px] font-mono text-white/20 tracking-[0.5em] uppercase">
+              // PHIL_STRAT_0x1
+            </div>
+            <div className="absolute bottom-0 left-0 hidden lg:block text-[10px] font-mono text-white/20 tracking-[0.5em] uppercase">
+              // CORE_VALUES_v4.2
+            </div>
+
             <div className="grid md:grid-cols-2 gap-16 items-start">
+
               <div>
                 <ScrollReveal delay={0.2} once={true}>
                   <h2 className="text-sm font-mono text-gray-500 mb-8 tracking-widest uppercase">
@@ -211,16 +248,22 @@ export default function Index() {
                 <div className="sticky top-32">
                   <ScrollReveal delay={0.4} once={true}>
                     <p className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-light leading-snug tracking-tight">
-                      <span className="text-gray-500">We believe in</span>{' '}
-                      <TypewriterText
-                        text="the synergy"
-                        className="text-white font-medium"
-                        delay={1000}
-                        speed={80}
-                        once={true}
-                      />{' '}
-                      <span className="text-gray-500">between</span>{' '}
-                      <span className="text-white">Business and Technology</span>.
+                      {config?.philosophy_msg ? (
+                        <span className="text-white">{config.philosophy_msg}</span>
+                      ) : (
+                        <>
+                          <span className="text-gray-500">We believe in</span>{' '}
+                          <TypewriterText
+                            text="the synergy"
+                            className="text-white font-medium"
+                            delay={1000}
+                            speed={80}
+                            once={true}
+                          />{' '}
+                          <span className="text-gray-500">between</span>{' '}
+                          <span className="text-white">Business and Technology</span>.
+                        </>
+                      )}
                     </p>
                   </ScrollReveal>
 
@@ -229,62 +272,81 @@ export default function Index() {
                       {isAuthenticated ? (
                         <Link to="/auth?mode=signup">
                           <MagneticHover>
-                            <Button size="lg" className="rounded-full bg-white text-black hover:bg-gray-200 hover:text-black transition-all duration-300">
-                              Explore InovX <ArrowRight className="ml-2 h-4 w-4" />
+                            <Button size="lg" className="rounded-full bg-white text-black hover:bg-gray-200 hover:text-black transition-all duration-500 px-10 py-7 h-auto text-lg font-bold shadow-[0_0_40px_rgba(255,255,255,0.1)] group">
+                              Explore InovX <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-2 transition-transform" />
                             </Button>
                           </MagneticHover>
                         </Link>
                       ) : (
                         <Link to="/auth?mode=signup">
                           <MagneticHover>
-                            <Button size="lg" className="rounded-full bg-white text-black hover:bg-gray-200 hover:text-black transition-all duration-300">
-                              Join Us <ArrowRight className="ml-2 h-4 w-4" />
+                            <Button size="lg" className="rounded-full bg-white text-black hover:bg-gray-200 hover:text-black transition-all duration-500 px-10 py-7 h-auto text-lg font-bold shadow-[0_0_40px_rgba(255,255,255,0.1)] group">
+                              Join Us <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-2 transition-transform" />
                             </Button>
                           </MagneticHover>
                         </Link>
                       )}
                     </div>
                   </ScrollReveal>
+
                 </div>
               </div>
 
-              <div className="space-y-32 pt-20">
-                <div className="group">
-                  <TextReveal direction="left" delay={0.2} once={true}>
-                    <h3 className="text-2xl font-bold mb-4">Innovation</h3>
-                  </TextReveal>
-                  <ScrollReveal delay={0.4} direction="right" once={true}>
-                    <p className="text-gray-400 leading-relaxed text-lg">
-                      Bridging the gap between code and commerce. We focus on teaching the business logic behind every technical innovation.
-                    </p>
-                  </ScrollReveal>
-                </div>
+              <div className="space-y-12 pt-20">
+                {[
+                  {
+                    title: "Innovation",
+                    desc: "Bridging the gap between code and commerce. We focus on teaching the business logic behind every technical innovation.",
+                    icon: <Cpu className="w-5 h-5 text-primary" />,
+                    index: "01"
+                  },
+                  {
+                    title: "Performance",
+                    desc: "From operational efficiency to financial strategy, we equip you with the tools to turn your ideas into viable, scaling enterprises.",
+                    icon: <TrendingUp className="w-5 h-5 text-primary" />,
+                    index: "02"
+                  },
+                  {
+                    title: "Community",
+                    desc: "Join a global network of elite developers. Share solutions, optimize approaches, and grow together in an ecosystem designed for excellence.",
+                    icon: <Radio className="w-5 h-5 text-primary" />,
+                    index: "03"
+                  }
+                ].map((item, i) => (
+                  <ScrollReveal key={i} delay={0.2 * i} direction={i % 2 === 0 ? "right" : "left"} once={true}>
+                    <div className="group relative p-10 rounded-[2rem] bg-white/[0.01] border border-white/5 backdrop-blur-xl hover:bg-white/[0.03] transition-all duration-700 hover:-translate-y-2">
+                      {/* Industrial Corner Accents */}
+                      <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-white/10 group-hover:border-primary/30 transition-colors rounded-tl-[2rem]" />
+                      <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-white/10 group-hover:border-primary/30 transition-colors rounded-br-[2rem]" />
 
-                <div className="group">
-                  <TextReveal direction="left" delay={0.2} once={true}>
-                    <h3 className="text-2xl font-bold mb-4">Performance</h3>
-                  </TextReveal>
-                  <ScrollReveal delay={0.4} direction="right" once={true}>
-                    <p className="text-gray-400 leading-relaxed text-lg">
-                      From operational efficiency to financial strategy, we equip you with the tools to turn your ideas into viable, scaling enterprises.
-                    </p>
-                  </ScrollReveal>
-                </div>
+                      <div className="relative flex gap-8 items-start">
+                        <div className="flex-shrink-0">
+                          <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-primary group-hover:text-black transition-all duration-500 transform group-hover:rotate-12">
+                            {item.icon}
+                          </div>
+                        </div>
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-4">
+                            <span className="text-[10px] font-mono text-primary/40 tracking-[0.3em] font-bold">{item.index}</span>
+                            <div className="h-[1px] w-8 bg-white/10" />
+                            <h3 className="text-2xl font-bold tracking-tight text-white">{item.title}</h3>
+                          </div>
+                          <p className="text-gray-400 leading-relaxed text-lg font-light max-w-lg">
+                            {item.desc}
+                          </p>
+                        </div>
+                      </div>
 
-                <div className="group">
-                  <TextReveal direction="left" delay={0.2} once={true}>
-                    <h3 className="text-2xl font-bold mb-4">Community</h3>
-                  </TextReveal>
-                  <ScrollReveal delay={0.4} direction="right" once={true}>
-                    <p className="text-gray-400 leading-relaxed text-lg">
-                      Join a global network of elite developers. Share solutions, optimize approaches, and grow together in an ecosystem designed for excellence.
-                    </p>
+                      {/* Hover Scanline */}
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity duration-500 pointer-events-none bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,white_2px,white_4px)]" />
+                    </div>
                   </ScrollReveal>
-                </div>
+                ))}
               </div>
             </div>
           </div>
         </section>
+
 
         {/* Mission & Vision Section */}
         <section id="vision-mission" className="py-24 px-4 relative z-10 bg-black scroll-optimized">
@@ -293,7 +355,11 @@ export default function Index() {
               <div className="mb-16 max-w-4xl">
                 <h2 className="text-primary font-mono text-sm tracking-widest uppercase mb-6">Who We Are</h2>
                 <p className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light leading-snug tracking-tight text-white/90">
-                  We are a student-led departmental club <span className="text-gray-500">bridging the gap between</span> <span className="text-white">technical skills</span> and <span className="text-white">business acumen</span>, preparing the next generation of tech entrepreneurs.
+                  {config?.vision_statement || (
+                    <>
+                      We are a student-led departmental club <span className="text-gray-500">bridging the gap between</span> <span className="text-white">technical skills</span> and <span className="text-white">business acumen</span>, preparing the next generation of tech entrepreneurs.
+                    </>
+                  )}
                 </p>
               </div>
             </ScrollReveal>
@@ -356,7 +422,7 @@ export default function Index() {
                       To become the premier platform for nurturing technical and entrepreneurial talent, empowering students to create innovative solutions.
                     </p>
 
-                    <div className="mt-auto border-l-2 border-primary/30 pl-4 py-3 bg-white/[0.02] rounded-r-lg">
+                    <div className="mt-auto border-l-2 border-primary/30 magnification-pr-4 magnification-py-3 bg-white/[0.02] rounded-r-lg pl-4 py-3">
                       <p className="italic text-gray-300 text-xs leading-relaxed font-light">
                         "Transforming ideas into impactful solutions for a better tomorrow."
                       </p>
@@ -369,98 +435,145 @@ export default function Index() {
         </section>
 
         {/* Events Carousel Section */}
-        <section id="events" className="py-32 px-4 relative z-10 bg-black overflow-hidden">
-          <div className="container mx-auto">
+        <section id="events" className="relative z-10 bg-black overflow-hidden">
+
+          {/* Section Background Elements */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-primary/[0.02] blur-[150px] rounded-full pointer-events-none" />
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none [background-image:radial-gradient(circle,white_1px,transparent_1px)] [background-size:40px_40px]" />
+
+          <div className="container mx-auto relative z-10">
             <ScrollReveal delay={0.2} once={true}>
-              <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
-                <div>
-                  <h2 className="text-sm font-mono text-primary mb-4 tracking-[0.3em] uppercase">Club Life</h2>
-                  <h3 className="text-3xl xs:text-4xl md:text-6xl font-display font-bold tracking-tighter">
-                    VIBRANT_<span className="text-primary">EVENTS</span>
-                  </h3>
+              <div className="relative mb-24">
+                {/* Massive background text */}
+                <div className="absolute -top-12 -left-8 text-[15vw] font-black text-white/[0.02] select-none pointer-events-none tracking-tighter uppercase whitespace-nowrap">
+                  VIBRANCE
                 </div>
-                <p className="max-w-md text-gray-500 text-lg font-light leading-relaxed">
-                  Glimpses into our high-octane hackathons, strategic boardrooms, and exclusive networking mixers.
-                </p>
+
+                <div className="flex flex-col md:flex-row justify-between items-end gap-12 relative z-10">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-[1px] bg-primary" />
+                      <h2 className="text-xs font-mono text-primary tracking-[0.5em] uppercase font-bold">InovX Experiences</h2>
+                    </div>
+                    <h3 className="text-4xl xs:text-5xl md:text-8xl font-display font-black tracking-tighter leading-none">
+                      VIBRANT_<span className="text-primary italic">EVENTS</span>
+                    </h3>
+                  </div>
+                  <div className="max-w-md border-l-2 border-white/10 pl-8 py-2">
+                    <p className="text-gray-500 text-lg md:text-xl font-light leading-relaxed italic">
+                      "Glimpses into our high-octane hackathons, strategic boardrooms, and exclusive networking mixers."
+                    </p>
+                  </div>
+                </div>
               </div>
             </ScrollReveal>
 
             <ScrollReveal delay={0.4} once={true}>
-              <div className="relative px-4 md:px-12">
-                <Carousel
-                  opts={{
-                    align: "start",
-                    loop: true,
-                  }}
-                  plugins={[
-                    Autoplay({
-                      delay: 4000,
-                    }),
-                  ]}
-                  className="w-full"
-                >
-                  <CarouselContent className="-ml-6">
-                    {[
-                      {
-                        title: "InovX Hackathon 2025",
-                        category: "HACKATHON",
-                        desc: "48 hours of intense coding and product building.",
-                        img: "/hackathon_event_1772289703083.png",
-                        date: "MAR 2025"
-                      },
-                      {
-                        title: "Strategy Spotlight",
-                        category: "WORKSHOP",
-                        desc: "Mastering the art of business scaling and financial modeling.",
-                        img: "/business_strategy_event_1772289721670.png",
-                        date: "APR 2025"
-                      },
-                      {
-                        title: "Leaders Connect",
-                        category: "MEETUP",
-                        desc: "Exclusive networking with tech founders and industry titans.",
-                        img: "/networking_event_inovx_1772289739248.png",
-                        date: "JUN 2025"
-                      }
-                    ].map((event, index) => (
-                      <CarouselItem key={index} className="pl-6 md:basis-1/2 lg:basis-1/3">
-                        <div className="group relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 bg-[#050505] transition-all duration-500 hover:border-white/20 hover:shadow-2xl hover:shadow-white/5">
-                          <img
-                            src={event.img}
-                            alt={event.title}
-                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-40 group-hover:opacity-60"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90" />
+              <HorizontalScroll>
+                {[
+                  {
+                    title: "InovX Hackathon 2025",
+                    category: "HACKATHON",
+                    desc: "48 hours of intense coding and product building. Where prototypes transition into viable startups.",
+                    img: "/hackathon_event_1772289703083.png",
+                    date: "MAR 2025",
+                    tags: ["Code", "Build", "Scale"]
+                  },
+                  {
+                    title: "Strategy Spotlight",
+                    category: "WORKSHOP",
+                    desc: "Mastering the art of business scaling, financial modeling, and venture capital acquisition.",
+                    img: "/business_strategy_event_1772289721670.png",
+                    date: "APR 2025",
+                    tags: ["Scale", "VC", "Growth"]
+                  },
+                  {
+                    title: "Leaders Connect",
+                    category: "MEETUP",
+                    desc: "Exclusive networking with tech founders and industry titans in an elite environment.",
+                    img: "/networking_event_inovx_1772289739248.png",
+                    date: "JUN 2025",
+                    tags: ["Network", "Elite", "Connect"]
+                  },
+                  {
+                    title: "DevQuest 1.0",
+                    category: "HACKATHON",
+                    desc: "A search for the most innovative software solutions to real-world industrial problems.",
+                    img: "/gallery_coding_session_1772987258487.png",
+                    date: "JUL 2025",
+                    tags: ["Innovate", "Solve", "Win"]
+                  },
+                  {
+                    title: "Venture Summit",
+                    category: "CONFERENCE",
+                    desc: "Bridging the gap between student innovators and seasoned venture capitalists and angel investors.",
+                    img: "/gallery_networking_mixer_1772987275932.png",
+                    date: "AUG 2025",
+                    tags: ["Venture", "Pitch", "Network"]
+                  }
+                ].map((event, index) => (
+                  <div key={index} className="w-[85vw] md:w-[45vw] lg:w-[32vw] flex-shrink-0 px-4">
+                    <div className="group/card relative h-[600px] overflow-hidden rounded-[2.5rem] border border-white/5 bg-[#050505] transition-all duration-700 hover:border-white/20 hover:shadow-[0_0_50px_rgba(255,255,255,0.05)]">
+                      {/* Image Container */}
+                      <div className="absolute inset-0">
+                        <img
+                          src={event.img}
+                          alt={event.title}
+                          className="w-full h-full object-cover transition-transform duration-1000 group-hover/card:scale-110 grayscale-[0.5] group-hover/card:grayscale-0 opacity-40 group-hover/card:opacity-60"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                      </div>
 
-                          <div className="absolute top-6 right-6 font-mono text-[10px] text-white/40 tracking-[0.2em]">
-                            {event.date}
-                          </div>
-
-                          <div className="absolute bottom-0 left-0 p-8 w-full space-y-4">
-                            <span className="inline-block px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] font-mono tracking-widest text-primary uppercase">
-                              {event.category}
-                            </span>
-                            <h4 className="text-2xl font-bold tracking-tight text-white group-hover:text-primary transition-colors">
-                              {event.title}
-                            </h4>
-                            <p className="text-gray-400 text-sm font-light leading-relaxed max-w-[280px] opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
-                              {event.desc}
-                            </p>
-                            <div className="pt-4 flex items-center gap-2 text-white text-[10px] font-mono tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-700 delay-100">
-                              VIEW_DETAILS <ArrowRight className="w-3 h-3 group-hover:translate-x-2 transition-transform" />
-                            </div>
-                          </div>
+                      {/* Top Metadata */}
+                      <div className="absolute top-10 left-10 right-10 flex justify-between items-start z-20">
+                        <div className="flex flex-col gap-1">
+                          <span className="text-[10px] font-mono text-primary tracking-[0.3em] font-bold uppercase">EVENT_LOG</span>
+                          <span className="text-white/40 text-[10px] font-mono tracking-widest uppercase">{event.date}</span>
                         </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  <CarouselPrevious className="hidden md:flex -left-6 bg-black/50 border-white/10 hover:bg-white hover:text-black transition-colors" />
-                  <CarouselNext className="hidden md:flex -right-6 bg-black/50 border-white/10 hover:bg-white hover:text-black transition-colors" />
-                </Carousel>
-              </div>
+                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center backdrop-blur-md group-hover/card:bg-primary group-hover/card:text-black transition-all duration-500">
+                          <ArrowRight className="w-4 h-4 transform -rotate-45 group-hover/card:rotate-0 transition-transform duration-500" />
+                        </div>
+                      </div>
+
+                      {/* Bottom Content */}
+                      <div className="absolute bottom-0 left-0 p-10 w-full space-y-6 z-20">
+                        <div className="flex items-center gap-3">
+                          <span className="px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-mono tracking-[0.2em] text-primary uppercase font-bold">
+                            {event.category}
+                          </span>
+                          <div className="h-[1px] flex-1 bg-white/10" />
+                        </div>
+
+                        <div className="space-y-3">
+                          <h4 className="text-3xl font-bold tracking-tight text-white leading-tight">
+                            {event.title}
+                          </h4>
+                          <p className="text-gray-400 text-sm font-light leading-relaxed line-clamp-2 transform transition-all duration-500 delay-100 opacity-80 group-hover/card:opacity-100">
+                            {event.desc}
+                          </p>
+                        </div>
+
+                        <div className="flex gap-3 pt-2">
+                          {event.tags.map(tag => (
+                            <span key={tag} className="text-[9px] font-mono text-white/30 tracking-widest uppercase py-1 px-2 border border-white/5 rounded">
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Hover Industrial Accent */}
+                      <div className="absolute bottom-4 right-4 w-12 h-12 border-b border-r border-white/20 transform scale-0 group-hover/card:scale-100 transition-transform duration-700" />
+                    </div>
+                  </div>
+                ))}
+              </HorizontalScroll>
             </ScrollReveal>
           </div>
         </section>
+
+
+
 
         {/* Selected Works / Features */}
         <section id="projects" className="py-32 bg-black relative z-10 overflow-hidden min-h-screen flex items-center">
@@ -588,8 +701,12 @@ export default function Index() {
           </ScrollReveal>
         </div>
 
+        {/* Gallery Section */}
+        <GallerySection />
+
         {/* Statistics Section */}
         <section className="py-40 bg-black relative z-10 overflow-hidden">
+
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.02] to-transparent" />
           <div className="container mx-auto px-4 relative z-10">
             <ScrollReveal delay={0.2}>
@@ -631,30 +748,8 @@ export default function Index() {
           </div>
         </section>
 
-        {/* Footer Minimalist */}
-        <footer id="contact" className="py-20 bg-black border-t border-white/10">
-          <div className="container mx-auto px-4 text-center">
-            <ParallaxSection speed={0.2}>
-              <ScrollReveal delay={0.2}>
-                <h2 className="font-display text-[12vw] font-bold leading-none tracking-tighter text-white/10 select-none pointer-events-none">
-                  INOVX
-                </h2>
-              </ScrollReveal>
-            </ParallaxSection>
-
-            <ScrollReveal delay={0.4}>
-              <div className="flex justify-between items-end mt-12 text-gray-500 text-sm font-mono uppercase tracking-widest">
-                <div>© 2025 InovX Club.</div>
-                <div className="flex gap-8">
-                  <a href="#" className="hover:text-white transition-colors">Privacy</a>
-                  <a href="#" className="hover:text-white transition-colors">Terms</a>
-                  <a href="#" className="hover:text-white transition-colors">Contact</a>
-                </div>
-              </div>
-            </ScrollReveal>
-          </div>
-        </footer>
       </main>
-    </div >
+    </div>
+
   );
 }

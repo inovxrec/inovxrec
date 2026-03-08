@@ -67,7 +67,7 @@ export default function ExovanceHero() {
 
                 <h1 className="font-display text-7xl xs:text-8xl sm:text-9xl md:text-[12rem] font-black tracking-tighter leading-none mb-8 mix-blend-difference relative group">
                     <TextReveal delay={0.1}>INOVX</TextReveal>
-                    <div className="absolute inset-0 blur-3xl bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                    <span className="absolute inset-0 block blur-3xl bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                 </h1>
 
                 <p className="max-w-3xl mx-auto text-gray-500 text-lg md:text-2xl font-light tracking-wide leading-relaxed px-4 mb-16">

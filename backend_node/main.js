@@ -1,8 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const morgan = require('morgan');
-const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 const projectRoutes = require('./routes/projectRoutes');
 const eventRoutes = require('./routes/eventRoutes');
@@ -17,31 +15,13 @@ const app = express();
 
 connectDB();
 
-app.use(morgan('dev'));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));
 
-app.use((req, res, next) => {
-    if (mongoose.connection.readyState !== 1) {
-        return res.status(503).json({ error: "Database not connected" });
-    }
-    next();
-});
-
 app.get('/', (req, res) => {
     res.json({ message: "Welcome to INOVX Backend API (Node.js/Express)" });
-});
-
-app.get('/diag/gallery', async (req, res) => {
-    try {
-        const Gallery = require('./models/Gallery');
-        const count = await Gallery.countDocuments();
-        res.json({ status: "OK", count });
-    } catch (e) {
-        res.status(500).json({ status: "Error", message: e.message });
-    }
 });
 
 app.use('/api/projects', projectRoutes);

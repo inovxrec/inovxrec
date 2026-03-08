@@ -20,8 +20,10 @@ import {
     Loader2,
     ChevronRight,
     TrendingUp,
-    Mail
+    Mail,
+    Settings
 } from "lucide-react";
+
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores/authStore";
 import { inovxApi, IProject, IEvent, ITeamMember, IStatistic } from "@/lib/inovxApi";
@@ -65,6 +67,13 @@ export default function Admin() {
     const { data: team, isLoading: teamLoading } = useQuery({ queryKey: ["team"], queryFn: inovxApi.getTeam });
     const { data: stats, isLoading: statsLoading } = useQuery({ queryKey: ["statistics"], queryFn: inovxApi.getStatistics });
     const { data: enquiries, isLoading: enquiriesLoading } = useQuery({ queryKey: ["enquiries"], queryFn: inovxApi.getEnquiries });
+    const { data: gallery, isLoading: galleryLoading } = useQuery({ queryKey: ["gallery"], queryFn: inovxApi.getGallery });
+    const { data: config, isLoading: configLoading } = useQuery({ queryKey: ["config"], queryFn: inovxApi.getConfig });
+
+    // Edit states
+    const [editingItem, setEditingItem] = useState<any>(null);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
 
     // Delete Mutations
     const deleteProjectMutation = useMutation({
@@ -119,26 +128,33 @@ export default function Admin() {
                 </ScrollReveal>
 
                 <Tabs defaultValue="dashboard" className="w-full" onValueChange={setActiveTab}>
-                    <TabsList className="grid grid-cols-3 md:grid-cols-6 mb-12 bg-white/5 border border-white/10 p-1 h-auto rounded-2xl">
-                        <TabsTrigger value="dashboard" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-white transition-all">
-                            <LayoutDashboard className="w-4 h-4 mr-2 hidden md:block" /> Dashboard
+                    <TabsList className="grid grid-cols-4 lg:grid-cols-8 mb-12 bg-white/5 border border-white/10 p-1 h-auto rounded-2xl">
+                        <TabsTrigger value="dashboard" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all text-xs">
+                            <LayoutDashboard className="w-4 h-4 mr-2 hidden lg:block" /> Dash
                         </TabsTrigger>
-                        <TabsTrigger value="projects" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-white transition-all">
-                            <Briefcase className="w-4 h-4 mr-2 hidden md:block" /> Projects
+                        <TabsTrigger value="projects" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all text-xs">
+                            <Briefcase className="w-4 h-4 mr-2 hidden lg:block" /> Projects
                         </TabsTrigger>
-                        <TabsTrigger value="events" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-white transition-all">
-                            <Calendar className="w-4 h-4 mr-2 hidden md:block" /> Events
+                        <TabsTrigger value="events" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all text-xs">
+                            <Calendar className="w-4 h-4 mr-2 hidden lg:block" /> Events
                         </TabsTrigger>
-                        <TabsTrigger value="team" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-white transition-all">
-                            <Users className="w-4 h-4 mr-2 hidden md:block" /> Team
+                        <TabsTrigger value="team" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all text-xs">
+                            <Users className="w-4 h-4 mr-2 hidden lg:block" /> Team
                         </TabsTrigger>
-                        <TabsTrigger value="stats" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-white transition-all">
-                            <BarChart3 className="w-4 h-4 mr-2 hidden md:block" /> Stats
+                        <TabsTrigger value="stats" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all text-xs">
+                            <BarChart3 className="w-4 h-4 mr-2 hidden lg:block" /> Stats
                         </TabsTrigger>
-                        <TabsTrigger value="enquiries" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-white transition-all">
-                            <MessageSquare className="w-4 h-4 mr-2 hidden md:block" /> Inquiries
+                        <TabsTrigger value="gallery" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all text-xs">
+                            <ImageIcon className="w-4 h-4 mr-2 hidden lg:block" /> Gallery
+                        </TabsTrigger>
+                        <TabsTrigger value="enquiries" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all text-xs">
+                            <MessageSquare className="w-4 h-4 mr-2 hidden lg:block" /> Inq
+                        </TabsTrigger>
+                        <TabsTrigger value="settings" className="rounded-xl py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all text-xs">
+                            <Settings className="w-4 h-4 mr-2 hidden lg:block" /> Settings
                         </TabsTrigger>
                     </TabsList>
+
 
                     <TabsContent value="dashboard">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
@@ -296,6 +312,57 @@ export default function Admin() {
                             </CardContent>
                         </Card>
                     </TabsContent>
+
+                    <TabsContent value="gallery">
+                        <div className="flex justify-between items-center mb-8">
+                            <h2 className="text-2xl font-bold">Gallery Management</h2>
+                            <GalleryModal onSave={() => queryClient.invalidateQueries({ queryKey: ["gallery"] })} />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {gallery?.map((item: any) => (
+                                <div key={item._id} className="group relative aspect-video rounded-3xl overflow-hidden border border-white/10 bg-white/5">
+                                    <img src={item.image} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" alt={item.title} />
+                                    <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black to-transparent translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all">
+                                        <p className="font-bold text-white">{item.title}</p>
+                                        <p className="text-xs text-gray-400">{item.category}</p>
+                                        <Button variant="ghost" size="sm" className="mt-4 w-full text-red-500 hover:bg-red-500/10" onClick={() => inovxApi.deleteGalleryItem(item._id).then(() => queryClient.invalidateQueries({ queryKey: ["gallery"] }))}>
+                                            <Trash2 className="w-4 h-4 mr-2" /> Delete
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))}
+                            {!gallery?.length && <div className="col-span-full p-20 text-center border-2 border-dashed border-white/5 rounded-3xl text-gray-600 font-mono italic">NO_GALLERY_ITEMS_IN_DATABASE</div>}
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="settings">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <Card className="bg-[#0a0a0a] border-white/5">
+                                <CardHeader>
+                                    <CardTitle>Social Media Handles</CardTitle>
+                                    <CardDescription>Configure global social links used in footer and sections.</CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <ConfigInput label="LinkedIn URL" configKey="linkedin_url" value={config?.linkedin_url} onUpdate={(val) => inovxApi.updateConfig('linkedin_url', val)} />
+                                    <ConfigInput label="GitHub URL" configKey="github_url" value={config?.github_url} onUpdate={(val) => inovxApi.updateConfig('github_url', val)} />
+                                    <ConfigInput label="Instagram URL" configKey="instagram_url" value={config?.instagram_url} onUpdate={(val) => inovxApi.updateConfig('instagram_url', val)} />
+                                    <ConfigInput label="Twitter URL" configKey="twitter_url" value={config?.twitter_url} onUpdate={(val) => inovxApi.updateConfig('twitter_url', val)} />
+                                </CardContent>
+                            </Card>
+
+                            <Card className="bg-[#0a0a0a] border-white/5">
+                                <CardHeader>
+                                    <CardTitle>Philosophy Content</CardTitle>
+                                    <CardDescription>Major site-wide text blocks.</CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <ConfigInput area label="Main Philosophy Message" configKey="philosophy_msg" value={config?.philosophy_msg} onUpdate={(val) => inovxApi.updateConfig('philosophy_msg', val)} />
+                                    <ConfigInput area label="Vision Statement" configKey="vision_statement" value={config?.vision_statement} onUpdate={(val) => inovxApi.updateConfig('vision_statement', val)} />
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </TabsContent>
+
                 </Tabs>
             </div>
         </div>
@@ -381,7 +448,7 @@ function ProjectModal({ onSave }: any) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button className="rounded-full bg-primary text-white"><Plus className="w-4 h-4 mr-2" /> New Project</Button>
+                <Button className="rounded-full bg-primary text-primary-foreground"><Plus className="w-4 h-4 mr-2" /> New Project</Button>
             </DialogTrigger>
             <DialogContent className="bg-[#0a0a0a] border-white/10 text-white max-w-2xl">
                 <form onSubmit={handleSubmit}>
@@ -447,7 +514,7 @@ function EventModal({ onSave }: any) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button className="rounded-full bg-primary text-white"><Plus className="w-4 h-4 mr-2" /> New Event</Button>
+                <Button className="rounded-full bg-primary text-primary-foreground"><Plus className="w-4 h-4 mr-2" /> New Event</Button>
             </DialogTrigger>
             <DialogContent className="bg-[#0a0a0a] border-white/10 text-white max-w-2xl">
                 <form onSubmit={handleSubmit}>
@@ -510,7 +577,7 @@ function TeamModal({ onSave }: any) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button className="rounded-full bg-primary text-white"><Plus className="w-4 h-4 mr-2" /> Add Member</Button>
+                <Button className="rounded-full bg-primary text-primary-foreground"><Plus className="w-4 h-4 mr-2" /> Add Member</Button>
             </DialogTrigger>
             <DialogContent className="bg-[#0a0a0a] border-white/10 text-white max-w-2xl">
                 <form onSubmit={handleSubmit}>
@@ -563,7 +630,7 @@ function StatModal({ onSave }: any) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button className="rounded-full bg-primary text-white"><Plus className="w-4 h-4 mr-2" /> New Statistic</Button>
+                <Button className="rounded-full bg-primary text-primary-foreground"><Plus className="w-4 h-4 mr-2" /> New Statistic</Button>
             </DialogTrigger>
             <DialogContent className="bg-[#0a0a0a] border-white/10 text-white">
                 <form onSubmit={handleSubmit}>
@@ -588,6 +655,86 @@ function StatModal({ onSave }: any) {
                     </div>
                     <DialogFooter>
                         <Button type="submit" disabled={loading} className="w-full bg-primary">Save Metric</Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+function ConfigInput({ label, configKey, value, onUpdate, area }: any) {
+    const [currentValue, setCurrentValue] = useState(value || "");
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (value) setCurrentValue(value);
+    }, [value]);
+
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+            await onUpdate(currentValue);
+            toast.success(`${label} updated`);
+        } catch (e) { toast.error("Update failed"); }
+        finally { setLoading(false); }
+    };
+
+    return (
+        <div className="space-y-2">
+            <Label className="text-[10px] uppercase tracking-widest font-mono text-gray-500">{label}</Label>
+            <div className="flex gap-2">
+                {area ? (
+                    <Textarea value={currentValue} onChange={(e) => setCurrentValue(e.target.value)} className="bg-black/50 border-white/10" rows={4} />
+                ) : (
+                    <Input value={currentValue} onChange={(e) => setCurrentValue(e.target.value)} className="bg-black/50 border-white/10" />
+                )}
+                <Button variant="ghost" size="icon" disabled={loading} onClick={handleSave} className="shrink-0 bg-white/5">
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                </Button>
+            </div>
+        </div>
+    );
+}
+
+function GalleryModal({ onSave }: any) {
+    const [loading, setLoading] = useState(false);
+    const handleSubmit = async (e: any) => {
+        e.preventDefault();
+        setLoading(true);
+        const formData = new FormData(e.target);
+        try {
+            await inovxApi.createGalleryItem(formData);
+            toast.success("Image added to gallery");
+            onSave();
+        } catch (e) { toast.error("Failed to add image"); }
+        finally { setLoading(false); }
+    };
+
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button className="rounded-full bg-primary text-primary-foreground"><Plus className="w-4 h-4 mr-2" /> Upload Image</Button>
+            </DialogTrigger>
+            <DialogContent className="bg-[#0a0a0a] border-white/10 text-white">
+                <form onSubmit={handleSubmit}>
+                    <DialogHeader>
+                        <DialogTitle>Gallery Upload</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="space-y-2">
+                            <Label>Title</Label>
+                            <Input name="title" required className="bg-black/50 border-white/10" />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Category</Label>
+                            <Input name="category" placeholder="Events, Hackathon, etc." required className="bg-black/50 border-white/10" />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Image</Label>
+                            <Input type="file" name="image" required className="bg-black/50 border-white/10" />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button type="submit" disabled={loading} className="w-full bg-primary">Upload to Cloud</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

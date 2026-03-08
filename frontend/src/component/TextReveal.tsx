@@ -11,9 +11,9 @@ interface TextRevealProps {
     once?: boolean;
 }
 
-export default function TextReveal({ 
-    children, 
-    className = "", 
+export default function TextReveal({
+    children,
+    className = "",
     delay = 0,
     duration = 0.8,
     direction = 'up',
@@ -21,8 +21,8 @@ export default function TextReveal({
     once = true
 }: TextRevealProps) {
     const ref = useRef(null);
-    const isInView = useInView(ref, { 
-        once, 
+    const isInView = useInView(ref, {
+        once,
         margin: "-50px",
         amount: 0.3
     });
@@ -58,39 +58,40 @@ export default function TextReveal({
     if (stagger && typeof children === 'string') {
         const words = children.split(' ');
         return (
-            <div ref={ref} className={`overflow-hidden ${className}`}>
+            <span ref={ref} className={`inline-block overflow-hidden ${className}`}>
                 {words.map((word, index) => (
                     <motion.span
                         key={index}
                         className="inline-block mr-2"
                         initial={getInitialTransform()}
                         animate={isInView ? getAnimateTransform() : getInitialTransform()}
-                        transition={{ 
-                            duration, 
-                            ease: [0.25, 0.46, 0.45, 0.94], 
-                            delay: delay + (index * 0.1) 
+                        transition={{
+                            duration,
+                            ease: [0.25, 0.46, 0.45, 0.94],
+                            delay: delay + (index * 0.1)
                         }}
                     >
                         {word}
                     </motion.span>
                 ))}
-            </div>
+            </span>
         );
     }
 
     return (
-        <div ref={ref} className={`overflow-hidden ${className}`}>
-            <motion.div
+        <span ref={ref} className={`inline-block overflow-hidden ${className}`}>
+            <motion.span
+                className="inline-block"
                 initial={getInitialTransform()}
                 animate={isInView ? getAnimateTransform() : getInitialTransform()}
-                transition={{ 
-                    duration, 
-                    ease: [0.25, 0.46, 0.45, 0.94], 
-                    delay 
+                transition={{
+                    duration,
+                    ease: [0.25, 0.46, 0.45, 0.94],
+                    delay
                 }}
             >
                 {children}
-            </motion.div>
-        </div>
+            </motion.span>
+        </span>
     );
 }

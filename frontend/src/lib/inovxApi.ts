@@ -149,7 +149,34 @@ export const inovxApi = {
         return response.data;
     },
 
+    // Gallery
+    getGallery: async () => {
+        const response = await api.get<any[]>('/gallery');
+        return response.data;
+    },
+    createGalleryItem: async (data: FormData) => {
+        const response = await api.post<any>('/gallery', data, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return response.data;
+    },
+    deleteGalleryItem: async (id: string) => {
+        const response = await api.delete(`/gallery/${id}`);
+        return response.data;
+    },
+
+    // Config (Site Settings)
+    getConfig: async () => {
+        const response = await api.get<Record<string, any>>('/config');
+        return response.data;
+    },
+    updateConfig: async (key: string, value: any) => {
+        const response = await api.post('/config', { key, value });
+        return response.data;
+    },
+
     // Enquiries (Contact Form)
+
     getEnquiries: async () => {
         const response = await api.get('/enquiries');
         return response.data;
